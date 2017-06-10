@@ -74,4 +74,12 @@
     <Error Condition="!Exists('..\packages\MSTest.TestAdapter.1.1.11\build\net45\MSTest.TestAdapter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSTest.TestAdapter.1.1.11\build\net45\MSTest.TestAdapter.targets'))" />
   </Target>
   <Import Project="..\packages\MSTest.TestAdapter.1.1.11\build\net45\MSTest.TestAdapter.targets" Condition="Exists('..\packages\MSTest.TestAdapter.1.1.11\build\net45\MSTest.TestAdapter.targets')" />
+
+  <ItemGroup>
+    <JsnlogDll Include="..\..\jsnlog\jsnlog\bin\Debug\net452\jsnlog.*"/>
+  </ItemGroup>
+  <Target Name="BeforeBuild">
+    <Copy SourceFiles="@(JsnlogDll)" DestinationFolder="Dependencies" />
+  </Target>
+
 </Project>
