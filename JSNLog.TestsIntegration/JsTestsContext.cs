@@ -32,12 +32,15 @@ namespace JSNLog.Tests.IntegrationTests
             Thread.Sleep(3000);
 
             // To use ChromeDriver, you must have chromedriver.exe. Download from
-            // https://sites.google.com/a/chromium.org/chromedriver/downloads
+            // https://www.nuget.org/packages/Selenium.WebDriver.ChromeDriver/
+            // And then move to the Dependencies folder from the bin folder.
+            // Don't leave it in the bin folder, because MSBuild wants to remove the bin folder during
+            // builds and it can't because of the chromedriver file, causing a build error.
 
             string dependenciesFolder =
                 Path.GetFullPath(Path.Combine(jsnlogTestsProjectDirectory, "..\\..\\", "Dependencies"));
 
-            Driver = new ChromeDriver(dependenciesFolder);
+          Driver = new ChromeDriver(dependenciesFolder);
         }
 
         public void Dispose()

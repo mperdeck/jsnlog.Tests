@@ -13,6 +13,6 @@ namespace JSNLog.Tests
         // The partials are written to directory:
         public const string _demosDirectory = _jsnlogDirectory + @"jsnlog.website\WebSite\Views\Shared\Demos";
 
-        public const string _jsnlogDllDirectory = _jsnlogDirectory + @"jsnlog\artifacts\bin\JSNLog\Debug\dnx451\JSNLog.dll";
+        public const string _jsnlogDllDirectory = _jsnlogDirectory + @"jsnlog.Tests\Dependencies\JSNLog.dll";
     }
 }
