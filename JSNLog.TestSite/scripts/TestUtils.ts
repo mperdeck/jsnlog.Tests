@@ -1,5 +1,5 @@
 ﻿/// <reference path="jquery.d.ts"/>
-/// <reference path="../../../../jsnlog.js/jsnlog.ts"/>
+/// <reference path="../../../jsnlog.js/jsnlog.ts"/>
 
 module TestUtils {
     export function Check(checkAppenderUrlPath: string, checkNbr: number, expected: JL.LogItem[]) {

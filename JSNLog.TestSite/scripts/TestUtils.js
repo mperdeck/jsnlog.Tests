@@ -1,5 +1,5 @@
 /// <reference path="jquery.d.ts"/>
-/// <reference path="../../../../jsnlog.js/jsnlog.ts"/>
+/// <reference path="../../../jsnlog.js/jsnlog.ts"/>
 var TestUtils;
 (function (TestUtils) {
     function Check(checkAppenderUrlPath, checkNbr, expected) {
