@@ -290,4 +290,7 @@ __pycache__/
 # ------------------------
 Dependencies/
 
+scripts/TestUtils.js.map
+scripts/lib/
+
 
