@@ -18,15 +18,18 @@ module TestUtils {
         // class="error-occurred" is used by the integration tests.
         // If an element with that class exists on the page, the test is taken to have failed.
 
+        var d = new Date();
+        var timeNow = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + ':' + d.getMilliseconds();
+
         var comparisonResult: string = LogItemArraysCompareResult(expected, actual);
         if (comparisonResult) {
             resultDiv = $('<table style="border-top: 3px red solid" class="error-occurred" />');
-            resultDiv.append('<tr><td>Error at Check</td><td>' + checkNbr + '</td></tr>');
+            resultDiv.append('<tr><td>Error at Check</td><td>' + checkNbr + ' | ' + timeNow + '</td></tr>');
             resultDiv.append('<tr><td valign="top" colspan=\'2\'>' + comparisonResult + '</td></tr>');
             resultDiv.append('<tr><td valign="top">Expected:</td><td>' + expectedString + '</td></tr>');
             resultDiv.append('<tr><td valign="top">Actual:</td><td>' + actualString + '</td></tr></table>');
         } else {
-            resultDiv = $('<div style="border-top: 3px green solid" >Passed: ' + checkNbr + '</div>');
+            resultDiv = $('<div style="border-top: 3px green solid" >Passed: ' + checkNbr + ' | ' + timeNow + '</div>');
         }
 
         $('body').append(resultDiv);
