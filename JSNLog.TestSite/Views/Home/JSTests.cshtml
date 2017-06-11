@@ -19,6 +19,11 @@
     <ajaxAppender url=""http://dummy.com/da10"" name=""da10"" batchSize=""3"" />
     <logger name=""l10"" appenders=""da10"" level=""WARN"" />
 
+    <!-- batch size and batchTimeout-->
+
+    <ajaxAppender url=""http://dummy.com/da11"" name=""da11"" batchSize=""3"" batchTimeout=""50"" />
+    <logger name=""l11"" appenders=""da11"" level=""WARN"" />
+
     <!-- IP filtering -->
 
     <ajaxAppender url=""http://dummy.com/da20"" name=""da20"" ipRegex=""1\.98"" /><!--never matches-->
@@ -174,6 +179,58 @@ new [] {
     new T(4000, "l10", 16),
     new T(checkNbr: 16, checkAppender: "da10"),
     
+    // Test Batching with timeouts. Batch size is 3, timeout is 500ms.
+    
+    new T(header: "Test Batching with timeouts"),
+
+    // First item times out.
+    // Tests after this ensure that timeout doesn't interfere with batching mechanism
+    new T(5000, "l11", 903),
+    new T(checkNbr: 901, checkAppender: "da11"),
+    new T(delayMs: 600),
+    new T(checkNbr: 903, checkAppender: "da11"),
+    
+    // All 3 items in one go
+    new T(5000, "l11", 913),
+    new T(checkNbr: 911, checkAppender: "da11"),
+    new T(4000, "l11", 913),
+    new T(checkNbr: 912, checkAppender: "da11"),
+    new T(6000, "l11", 913),
+    new T(checkNbr: 913, checkAppender: "da11"),
+
+    // All 3 within the timeout, with delays in between
+    new T(5000, "l11", 923),
+    new T(delayMs: 100),
+    new T(checkNbr: 921, checkAppender: "da11"),
+    new T(4000, "l11", 923),
+    new T(delayMs: 150),
+    new T(checkNbr: 922, checkAppender: "da11"),
+    new T(6000, "l11", 923),
+    new T(checkNbr: 923, checkAppender: "da11"),
+
+    // 1 item times out, followed by 2, folled by 1
+    new T(5000, "l11", 933),
+    new T(checkNbr: 931, checkAppender: "da11"),
+    new T(delayMs: 600),
+    new T(checkNbr: 933, checkAppender: "da11"),
+
+    new T(5000, "l11", 944),
+    new T(checkNbr: 941, checkAppender: "da11"),
+    new T(delayMs: 100),
+    new T(checkNbr: 942, checkAppender: "da11"),
+    new T(5000, "l11", 944),
+    new T(delayMs: 100),
+    new T(checkNbr: 943, checkAppender: "da11"),
+    new T(delayMs: 600),
+    new T(checkNbr: 944, checkAppender: "da11"),
+
+    new T(5000, "l11", 953),
+    new T(checkNbr: 951, checkAppender: "da11"),
+    new T(delayMs: 100),
+    new T(checkNbr: 952, checkAppender: "da11"),
+    new T(delayMs: 500),
+    new T(checkNbr: 953, checkAppender: "da11"),
+
     // IP matching
     
     new T(header: "IP matching"),
