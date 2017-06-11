@@ -30,9 +30,9 @@ namespace JSNLog.TestSite.Logic
             return js;
         }
 
-        private static string Msg(int seq, int level, string logger)
+        private static string Msg(int seq, int checkExpected, int level, string logger)
         {
-            return string.Format("msg{0} level: {1}, logger: {2}", seq, level, logger);
+            return $"msg{seq}-{checkExpected} level: {level}, logger: {logger}";
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace JSNLog.TestSite.Logic
             {
                 if (t.CheckExpected == checkNbr)
                 {
-                    string msg = t.ExpectedMsg ?? Msg(seq, t.Level, t.Logger);
+                    string msg = t.ExpectedMsg ?? Msg(seq, t.CheckExpected, t.Level, t.Logger);
                     string timestamp = GetTimestampJs(seq);
 
                     sb.AppendLine(string.Format("  {0}{{", first ? "" : ","));
@@ -114,7 +114,7 @@ namespace JSNLog.TestSite.Logic
                 {
                     // Level given, so generate call to logger.
 
-                    string msg = t.LogObject ?? @"""" + Msg(seq, t.Level, t.Logger) + @"""";
+                    string msg = t.LogObject ?? @"""" + Msg(seq, t.CheckExpected, t.Level, t.Logger) + @"""";
                     string logCallJs = string.Format(@"JL(""{0}"").log({1}, {2});", t.Logger, t.Level, msg);
                     string storeTimestampJs = StoreTimestampJs(seq);
                     sb.AppendLine(logCallJs + " " + storeTimestampJs);
@@ -164,7 +164,7 @@ namespace JSNLog.TestSite.Logic
             // The testdone object signals to the C# that it can stop waiting for the test to finish
             sb.AppendLine(@"$('body').append('<div id=""testdone""></div>');");
 
-            sb.AppendLine("}");
+             sb.AppendLine("}");
 
             sb.AppendLine("start();");
 
