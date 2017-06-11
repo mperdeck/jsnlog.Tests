@@ -161,6 +161,9 @@ namespace JSNLog.TestSite.Logic
                 seq++;
             }
 
+            // The testdone object signals to the C# that it can stop waiting for the test to finish
+            sb.AppendLine(@"$('body').append('<div id=""testdone""></div>');");
+
             sb.AppendLine("}");
 
             sb.AppendLine("start();");

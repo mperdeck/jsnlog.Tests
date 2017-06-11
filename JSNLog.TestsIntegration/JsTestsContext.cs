@@ -50,13 +50,47 @@ namespace JSNLog.Tests.IntegrationTests
             {
                 _webServer.StopSite();
                 Driver.Quit();
-            }
+            } 
         }
 
         public void OpenPage(string relativeUrl)
         {
             string absoluteUrl = _webServer.SiteUrl + relativeUrl;
             Driver.Navigate().GoToUrl(absoluteUrl);
+
+            WaitForTestDone();
+        }
+
+        private bool TestIsDone()
+        {
+            try
+            {
+                // Throws NoSuchElementException if error-occurred not found
+                Driver.FindElement(By.Id("testdone"));
+                return true;
+            }
+            catch (NoSuchElementException)
+            {
+            }
+
+            return false;
+        }
+
+        public void WaitForTestDone()
+        {
+            int tries = 0;
+
+            do
+            {
+                tries++;
+
+                if (tries > 40)
+                {
+                    throw new Exception("Timed out waiting for testdone");
+                }
+
+                Thread.Sleep(100);
+            } while (!TestIsDone());
         }
 
         /// <summary>
