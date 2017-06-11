@@ -102,7 +102,7 @@ namespace JSNLog.TestSite.Logic
             sb.AppendLine(jsnlogJavaScriptConfig);
 
             sb.AppendLine(@"<script type=""text/javascript"">");
-            sb.AppendLine("(function () {");
+            sb.AppendLine("function start() {");
 
             sb.AppendLine(string.Format(
                 "JL.setOptions({{ 'defaultBeforeSend': TestUtils.beforeSend, 'clientIP': '{0}', 'requestId': '{1}' }});", userIp, requestId));
@@ -140,14 +140,35 @@ namespace JSNLog.TestSite.Logic
                     sb.AppendLine(string.Format("$('body').append('<h3>{0}</h3>');", t.Header));
                 }
 
+                if (t.DelayMs > 0)
+                {
+                    // Delay execution of the steps by
+                    // creating a new function (below the current one), creating a setTimeout to run
+                    // that function after the delay. Then continue adding steps to that new function.
+
+                    string nextFunctionName = $"continue{seq}";
+
+                    sb.AppendLine($"setTimeout({nextFunctionName}, {t.DelayMs});");
+
+                    // End curent function
+                    sb.AppendLine("}");
+
+                    // Start new function
+                    sb.AppendLine($"function {nextFunctionName}() {{");
+
+                }
+
                 seq++;
             }
+
+            sb.AppendLine("}");
+
+            sb.AppendLine("start();");
 
             // Remove the "running" heading. If the tests somehow crash, we won't get here and the running header will remain,
             // showing something is wrong.
             sb.AppendLine("$('#running').remove();");
 
-            sb.AppendLine("})();");
             sb.AppendLine("</script>");
             string js = sb.ToString();
 

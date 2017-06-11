@@ -13,6 +13,8 @@ namespace JSNLog.TestSite.Logic
     /// 
     /// If you set checkNbr, a check will be done whether all expected log messages have been processed by the appender with javascript variable name CheckAppender.
     /// 
+    /// If you set DelayMs, execution of the tests is delayed by the given number of ms.
+    /// 
     /// The check is just a number. It will be checked whether all Ts where checkExpected equals the check number have been
     /// processed by the appender.
     /// </summary>
@@ -24,6 +26,7 @@ namespace JSNLog.TestSite.Logic
         public string CheckAppender { get; private set; }
         public int CheckExpected { get; private set; }
         public string Header { get; private set; }
+        public int DelayMs { get; private set; }
 
         // A piece of JS code to pass to the JSNLog logger to log.
         // To log a string, you'd pass in "'string'".
@@ -37,7 +40,8 @@ namespace JSNLog.TestSite.Logic
 
         public T(int level = -1, string logger = "", 
             int checkExpected = -1, int checkNbr = -1, string checkAppender = "a0",
-            string header = "", string logObject = null, string expectedMsg = null)
+            string header = "", string logObject = null, string expectedMsg = null,
+            int delayMs = 0)
         {
             Level = level;
             Logger = logger;
@@ -47,6 +51,7 @@ namespace JSNLog.TestSite.Logic
             Header = header;
             LogObject = logObject;
             ExpectedMsg = expectedMsg;
+            DelayMs = delayMs;
 
             if ((logObject == null) != (expectedMsg == null))
             {
