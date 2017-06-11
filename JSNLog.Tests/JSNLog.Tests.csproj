@@ -84,6 +84,7 @@
     <Compile Include="UnitTests\LoggerProcessorTests.Http.Infrastructure.cs" />
     <Compile Include="UnitTests\LoggingUrlHelpersTests.cs" />
     <Compile Include="UnitTests\ProcessRootTests.cs" />
+    <Compile Include="UnitTests\ProcessInvalidRootTests.cs" />
     <Compile Include="UnitTests\UnitTestHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
