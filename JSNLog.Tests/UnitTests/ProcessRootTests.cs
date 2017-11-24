@@ -37,6 +37,40 @@ namespace JSNLog.Tests.UnitTests
             Assert.Matches(@"\""batchTimeout\"": 500", Js);
         }
 
+        [Fact]
+        public void MaxBatchSizeEqualToBatchSize()
+        {
+            // Arrange
+
+            string configXml = @"
+                <jsnlog>
+    <ajaxAppender name=""aa"" batchSize=""10"" maxBatchSize=""10"" level=""2300"" />
+</jsnlog>
+";
+            string Js = ToJavaScript(configXml);
+
+            // Act and Assert
+            Assert.Matches(@"\""batchSize\"": 10", Js);
+            Assert.Matches(@"\""maxBatchSize\"": 10", Js);
+        }
+
+        [Fact]
+        public void MaxBatchSizeGreaterThanBatchSize()
+        {
+            // Arrange
+
+            string configXml = @"
+                <jsnlog>
+    <ajaxAppender name=""aa"" batchSize=""10"" maxBatchSize=""11"" level=""2300"" />
+</jsnlog>
+";
+            string Js = ToJavaScript(configXml);
+
+            // Act and Assert
+            Assert.Matches(@"\""batchSize\"": 10", Js);
+            Assert.Matches(@"\""maxBatchSize\"": 11", Js);
+        }
+
         private string ToJavaScript(string configXml)
         {
             var sb = new StringBuilder();

@@ -127,6 +127,51 @@ namespace JSNLog.Tests.UnitTests
         }
 
         [Fact]
+        public void InvalidMaxBatchSizeSize()
+        {
+            // Arrange
+
+            string configXml = @"
+                <jsnlog>
+    <ajaxAppender name=""aa"" maxBatchSize=""abc"" level=""2300"" />
+</jsnlog>
+";
+
+            // Act and Assert
+            Exception ex = Assert.Throws<WebConfigException>(() => RunTest(configXml));
+        }
+
+        [Fact]
+        public void MaxBatchSizeSmallerThanBatchSize()
+        {
+            // Arrange
+
+            string configXml = @"
+                <jsnlog>
+    <ajaxAppender name=""aa"" batchSize=""30"" level=""2300"" />
+</jsnlog>
+";
+
+            // Act and Assert
+            Exception ex = Assert.Throws<ConfigurationException>(() => RunTest(configXml));
+        }
+
+        [Fact]
+        public void MaxBatchSizeSmallerThanBatchSize2()
+        {
+            // Arrange
+
+            string configXml = @"
+                <jsnlog>
+    <ajaxAppender name=""aa"" batchSize=""10"" maxBatchSize=""9"" level=""2300"" />
+</jsnlog>
+";
+
+            // Act and Assert
+            Exception ex = Assert.Throws<ConfigurationException>(() => RunTest(configXml));
+        }
+
+        [Fact]
         public void InvalidBufferSize()
         {
             // Arrange
