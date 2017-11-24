@@ -4,7 +4,7 @@
 
     <h2>RequestIdTest</h2>
     @{ 
-        CommonTestHelpers.SetConfigCache(@"<jsnlog productionLibraryPath=""~/scripts/libs/jsnlog.js""></jsnlog>");
+        CommonTestHelpers.SetConfigCache(@"<jsnlog></jsnlog>");
     }
 
     @Html.Raw(JSNLog.JavascriptLogging.Configure(ViewBag.PassedInRequestId))

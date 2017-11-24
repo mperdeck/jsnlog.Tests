@@ -98,8 +98,26 @@ namespace JSNLog.TestSite.Logic
             // This essentially injects the config XML into JSNLog (the same way as when reading from web.config).
             CommonTestHelpers.SetConfigCache(configXml);
 
+            // Generate configuration JavaScript
             var jsnlogJavaScriptConfig = JSNLog.JavascriptLogging.Configure(); 
             sb.AppendLine(jsnlogJavaScriptConfig);
+
+            // The Configure method generates code that creates appenders in function __jsnlog_configure.
+            // That function is called when jsnlog.js ends loading.
+            // If you do not set JL._XMLHttpRequest before __jsnlog_configure is called, the appenders will use the standard
+            // XMLHttpRequest object.
+            //
+            // So, create a new method __jsnlog_configure that first sets JL._XMLHttpRequest and then calls the
+            // generated __jsnlog_configure.
+            sb.AppendLine(@"
+                <script type=""text/javascript"">
+                var __jsnlog_configure_generated = __jsnlog_configure;
+                __jsnlog_configure = function (JL) {                    JL._XMLHttpRequest = TestUtils.XMLHttpRequestMock;
+                    __jsnlog_configure_generated(JL);
+                };
+                </script>");
+
+            sb.AppendLine(@"<script type=""text/javascript"" src=""/scripts/libs/jsnlog.js""></script>");
 
             sb.AppendLine(@"<script type=""text/javascript"">");
             sb.AppendLine("function start() {");
