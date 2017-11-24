@@ -37,15 +37,47 @@ module TestUtils {
         (<any>window)[checkAppenderUrl] = [];
     }
 
-	export function beforeSend(xhr: any) {
-		var appenderThis = this;
-        xhr.send = function (json) {
+    export class XMLHttpRequestMock {
+        onreadystatechange: () => void;
+        readyState: number;
+        status: number;
 
-            if (!(<any>window)[appenderThis.url]) { (<any>window)[appenderThis.url] = []; }
+        private _url: string;
 
+        abort() { }
+
+        setRequestHeader(header: string, value: string) { }
+        open(method: string, url: string) {
+            this._url = url;
+        }
+
+        send(json: string) {
+
+            if (!(<any>window)[this._url]) { (<any>window)[this._url] = []; }
             var item = JSON.parse(json);
-            (<any>window)[appenderThis.url] = (<any>window)[appenderThis.url].concat(item.lg);
-		};
+            (<any>window)[this._url] = (<any>window)[this._url].concat(item.lg);
+
+            this.status = 200;
+            this.readyState = 4;
+            this.onreadystatechange();
+        }
+    };
+
+
+	export function beforeSend(xhr: any) {
+        //var appenderThis = this;
+
+        //xhr.send = function (json) {
+
+        //    if (!(<any>window)[appenderThis.url]) { (<any>window)[appenderThis.url] = []; }
+
+        //    var item = JSON.parse(json);
+        //    (<any>window)[appenderThis.url] = (<any>window)[appenderThis.url].concat(item.lg);
+
+        //    this.readyState = 4;
+        //    this.status = 200;
+        //    this.onreadystatechange();
+        //};
 	}
 
     function FormatResult(idx: number, fieldName: string, expected: string, actual: string): string {
@@ -106,3 +138,4 @@ module TestUtils {
     }
 }
 
+JL._XMLHttpRequest = <any>TestUtils.XMLHttpRequestMock;
