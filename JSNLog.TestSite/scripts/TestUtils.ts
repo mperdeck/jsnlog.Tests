@@ -121,4 +121,3 @@ module TestUtils {
     }
 }
 
-JL._XMLHttpRequest = <any>TestUtils.XMLHttpRequestMock;
