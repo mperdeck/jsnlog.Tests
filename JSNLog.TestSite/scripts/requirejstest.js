@@ -5,7 +5,6 @@
 
 require(["libs/jsnlog"], function () {
 
-    JL.setOptions({ 'defaultBeforeSend': TestUtils.beforeSend });
     var a0 = JL.createAjaxAppender('da1');
     a0.setOptions({ "url": "http://dummy.com/da1" });
     var logger = JL('l2');

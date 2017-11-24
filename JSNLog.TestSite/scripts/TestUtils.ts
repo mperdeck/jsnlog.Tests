@@ -6,7 +6,7 @@ module TestUtils {
 
         var checkAppenderUrl = 'http://dummy.com/' + checkAppenderUrlPath;
 
-		// An appender only calls beforeSend when it tries to send a log request.
+		// An appender only calls xhr.send when it tries to send a log request.
 		// So if the appender never tries to send anything, than actual will be undefined.
         var actual: JL.LogItem[] = (<any>window)[checkAppenderUrl] || [];
 
@@ -62,23 +62,6 @@ module TestUtils {
             this.onreadystatechange();
         }
     };
-
-
-	export function beforeSend(xhr: any) {
-        //var appenderThis = this;
-
-        //xhr.send = function (json) {
-
-        //    if (!(<any>window)[appenderThis.url]) { (<any>window)[appenderThis.url] = []; }
-
-        //    var item = JSON.parse(json);
-        //    (<any>window)[appenderThis.url] = (<any>window)[appenderThis.url].concat(item.lg);
-
-        //    this.readyState = 4;
-        //    this.status = 200;
-        //    this.onreadystatechange();
-        //};
-	}
 
     function FormatResult(idx: number, fieldName: string, expected: string, actual: string): string {
         return "idx: " + idx + "</br>field: " + fieldName + "</br>expected: " + expected +"</br>actual: "+ actual;
