@@ -87,7 +87,7 @@ namespace JSNLog.TestSite.Logic
             sb.AppendLine(@"
                 <script type=""text/javascript"">
                 var __jsnlog_configure_generated = __jsnlog_configure;
-                __jsnlog_configure = function (JL) {                    JL._createXMLHttpRequest = TestUtils.createXMLHttpRequestMock;
+                __jsnlog_configure = function (JL) {                    JL._createXMLHttpRequest = JLTestUtils.createXMLHttpRequestMock;
                     if (__jsnlog_configure_generated) { __jsnlog_configure_generated(JL); }
                 };
                 </script>");
@@ -155,7 +155,7 @@ namespace JSNLog.TestSite.Logic
                     string expected = Expected(t.CheckNbr, tests);
 
                     // Generate check js
-                    string checkJs = string.Format("TestUtils.Check('{0}', {1}, {2});", t.CheckAppender, t.CheckNbr, expected);
+                    string checkJs = string.Format("JLTestUtils.Check('{0}', {1}, {2});", t.CheckAppender, t.CheckNbr, expected);
                     sb.AppendLine("");
                     sb.AppendLine(checkJs);
                     sb.AppendLine("// ----------------------");

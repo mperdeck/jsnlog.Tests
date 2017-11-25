@@ -1,22 +1,24 @@
-/// <reference path="jquery.d.ts"/>
+/// <reference types="jquery"/>
+// / <reference path="jquery.d.ts"/>
 /// <reference path="../../../jsnlog.js/jsnlog.ts"/>
-var TestUtils;
-(function (TestUtils) {
+var JLTestUtils;
+(function (JLTestUtils) {
     function Check(checkAppenderUrlPath, checkNbr, expected) {
         var checkAppenderUrl = 'http://dummy.com/' + checkAppenderUrlPath;
-        // An appender only calls beforeSend when it tries to send a log request.
+        // An appender only calls xhr.send when it tries to send a log request.
         // So if the appender never tries to send anything, than actual will be undefined.
         var actual = window[checkAppenderUrl] || [];
         var resultDiv;
         var expectedString = JSON.stringify(expected);
         var actualString = JSON.stringify(actual);
-        // class="error-occurred" is used by the integration tests.
+        // class="jasmine-failed" is used by the integration tests.
+        // It is also given to the results element on the Jasmine tests page.
         // If an element with that class exists on the page, the test is taken to have failed.
         var d = new Date();
         var timeNow = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + ':' + d.getMilliseconds();
         var comparisonResult = LogItemArraysCompareResult(expected, actual);
         if (comparisonResult) {
-            resultDiv = $('<table style="border-top: 3px red solid" class="error-occurred" />');
+            resultDiv = $('<table style="border-top: 3px red solid" class="jasmine-failed" />');
             resultDiv.append('<tr><td>Error at Check</td><td>' + checkNbr + ' | ' + timeNow + '</td></tr>');
             resultDiv.append('<tr><td valign="top" colspan=\'2\'>' + comparisonResult + '</td></tr>');
             resultDiv.append('<tr><td valign="top">Expected:</td><td>' + expectedString + '</td></tr>');
@@ -28,18 +30,47 @@ var TestUtils;
         $('body').append(resultDiv);
         window[checkAppenderUrl] = [];
     }
-    TestUtils.Check = Check;
-    function beforeSend(xhr) {
-        var appenderThis = this;
-        xhr.send = function (json) {
-            if (!window[appenderThis.url]) {
-                window[appenderThis.url] = [];
+    JLTestUtils.Check = Check;
+    var XMLHttpRequestMock = (function () {
+        function XMLHttpRequestMock() {
+        }
+        XMLHttpRequestMock.prototype.abort = function () { };
+        XMLHttpRequestMock.prototype.setRequestHeader = function (header, value) { };
+        XMLHttpRequestMock.prototype.open = function (method, url) {
+            this._url = url;
+        };
+        XMLHttpRequestMock.prototype.send = function (json) {
+            if (!window[this._url]) {
+                window[this._url] = [];
             }
             var item = JSON.parse(json);
-            window[appenderThis.url] = window[appenderThis.url].concat(item.lg);
+            window[this._url] = window[this._url].concat(item.lg);
+            this.status = 200;
+            this.readyState = 4;
+            this.onreadystatechange();
         };
+        return XMLHttpRequestMock;
+    }());
+    JLTestUtils.XMLHttpRequestMock = XMLHttpRequestMock;
+    ;
+    // The factory has to always return this one mock XMLHttpRequest, so in the Jasmine tests
+    // we can spy on it.
+    JLTestUtils.xMLHttpRequestMock = new JLTestUtils.XMLHttpRequestMock();
+    function createXMLHttpRequestMock() {
+        return JLTestUtils.xMLHttpRequestMock;
     }
-    TestUtils.beforeSend = beforeSend;
+    JLTestUtils.createXMLHttpRequestMock = createXMLHttpRequestMock;
+    JLTestUtils.testNbr = 0;
+    function runTest(test) {
+        var testNbrString = JLTestUtils.testNbr.toString();
+        var testappender = JL.createAjaxAppender("testappender" + testNbrString);
+        var testLogger = JL('testlogger' + testNbrString);
+        testLogger.setOptions({ appenders: [testappender] });
+        var xhrMock = JLTestUtils.xMLHttpRequestMock;
+        var sendCalls = JLTestUtils.xMLHttpRequestMock.send.calls;
+        test(testLogger, testappender, xhrMock, sendCalls);
+    }
+    JLTestUtils.runTest = runTest;
     function FormatResult(idx, fieldName, expected, actual) {
         return "idx: " + idx + "</br>field: " + fieldName + "</br>expected: " + expected + "</br>actual: " + actual;
     }
@@ -81,5 +112,5 @@ var TestUtils;
         }
         return "";
     }
-})(TestUtils || (TestUtils = {}));
-//# sourceMappingURL=TestUtils.js.map
+})(JLTestUtils || (JLTestUtils = {}));
+//# sourceMappingURL=JLTestUtils.js.map

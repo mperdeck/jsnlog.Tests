@@ -1,7 +1,7 @@
-﻿/// <reference path="jquery.d.ts"/>
+﻿/// <reference types="jquery"/>
 /// <reference path="../../../jsnlog.js/jsnlog.ts"/>
 
-module TestUtils {
+module JLTestUtils {
     export function Check(checkAppenderUrlPath: string, checkNbr: number, expected: JL.LogItem[]) {
 
         var checkAppenderUrl = 'http://dummy.com/' + checkAppenderUrlPath;
@@ -66,10 +66,26 @@ module TestUtils {
 
     // The factory has to always return this one mock XMLHttpRequest, so in the Jasmine tests
     // we can spy on it.
-    export var xMLHttpRequestMock = new TestUtils.XMLHttpRequestMock();
+    export var xMLHttpRequestMock = new JLTestUtils.XMLHttpRequestMock();
 
     export function createXMLHttpRequestMock(): XMLHttpRequest {
-        return <any>TestUtils.xMLHttpRequestMock;
+        return <any>JLTestUtils.xMLHttpRequestMock;
+    }
+
+    export var testNbr: number = 0;
+
+    export function runTest(test: (logger: JL.JSNLogLogger, appender: JL.JSNLogAjaxAppender, xhr: XMLHttpRequest, callsToSend: any) => void) {
+
+        var testNbrString: string = JLTestUtils.testNbr.toString();
+
+        var testappender = JL.createAjaxAppender("testappender" + testNbrString);
+        var testLogger = JL('testlogger' + testNbrString); 
+        testLogger.setOptions({ appenders: [testappender] })
+
+        var xhrMock = JLTestUtils.xMLHttpRequestMock;
+        var sendCalls = (<any>JLTestUtils.xMLHttpRequestMock.send).calls;
+
+        test(testLogger, testappender, <any>xhrMock, sendCalls);
     }
 
     function FormatResult(idx: number, fieldName: string, expected: string, actual: string): string {

@@ -130,15 +130,15 @@
     <Content Include="Global.asax" />
     <Content Include="Html\exceptiontests.html" />
     <Content Include="Html\requirejstest.html" />
-    <Content Include="JasmineTests\lib\jasmine-2.8.0\boot.js" />
-    <Content Include="JasmineTests\lib\jasmine-2.8.0\console.js" />
-    <Content Include="JasmineTests\lib\jasmine-2.8.0\jasmine-html.js" />
-    <Content Include="JasmineTests\lib\jasmine-2.8.0\jasmine.css" />
-    <Content Include="JasmineTests\lib\jasmine-2.8.0\jasmine.js" />
-    <Content Include="JasmineTests\lib\jasmine-2.8.0\jasmine_favicon.png" />
+    <Content Include="scripts\libs\jasmine-2.8.0\boot.js" />
+    <Content Include="scripts\libs\jasmine-2.8.0\console.js" />
+    <Content Include="scripts\libs\jasmine-2.8.0\jasmine-html.js" />
+    <Content Include="scripts\libs\jasmine-2.8.0\jasmine.css" />
+    <Content Include="scripts\libs\jasmine-2.8.0\jasmine.js" />
+    <Content Include="scripts\libs\jasmine-2.8.0\jasmine_favicon.png" />
     <Content Include="JasmineTests\SpecRunner.html" />
-    <Content Include="JasmineTests\spec\SimpleLoggingSpec.js" />
-    <Content Include="JasmineTests\spec\SpecHelper.js" />
+    <Content Include="JasmineTests\SimpleLoggingSpec.js" />
+    <Content Include="JasmineTests\SpecHelper.js" />
     <Content Include="scripts\ai.0.22.19-build00125.js" />
     <Content Include="scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="scripts\exceptiontests.js" />
@@ -147,7 +147,6 @@
     <Content Include="scripts\libs\jsnlog.min.js" />
     <Content Include="scripts\require.js" />
     <Content Include="scripts\requirejstest.js" />
-    <Content Include="scripts\TestUtils.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -168,7 +167,6 @@
     </Content>
     <Content Include="scripts\libs\jsnlog.js.map" />
     <Content Include="scripts\compilets.bat" />
-    <Content Include="scripts\TestUtils.js.map" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\JSTests.cshtml" />
     <Content Include="Views\Home\MaxMessagesTest.cshtml" />
@@ -191,8 +189,7 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="scripts\jquery.d.ts" />
-    <TypeScriptCompile Include="scripts\TestUtils.ts" />
+    <TypeScriptCompile Include="scripts\JLTestUtils.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
