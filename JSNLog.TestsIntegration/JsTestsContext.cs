@@ -111,7 +111,7 @@ namespace JSNLog.Tests.IntegrationTests
             
             try
             {
-                // Throws NoSuchElementException if error-occurred not found
+                // Throws NoSuchElementException if loaded not found
                 Driver.FindElement(By.Id("loaded"));
             }
             catch (NoSuchElementException)
@@ -123,7 +123,7 @@ namespace JSNLog.Tests.IntegrationTests
             try
             {
                 // Throws NoSuchElementException if error-occurred not found
-                Driver.FindElement(By.ClassName("error-occurred"));
+                Driver.FindElement(By.ClassName("jasmine-failed"));
             }
             catch (NoSuchElementException)
             {

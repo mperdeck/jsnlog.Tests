@@ -15,7 +15,8 @@ module TestUtils {
         var expectedString = JSON.stringify(expected);
         var actualString = JSON.stringify(actual);
 
-        // class="error-occurred" is used by the integration tests.
+        // class="jasmine-failed" is used by the integration tests.
+        // It is also given to the results element on the Jasmine tests page.
         // If an element with that class exists on the page, the test is taken to have failed.
 
         var d = new Date();
@@ -23,7 +24,7 @@ module TestUtils {
 
         var comparisonResult: string = LogItemArraysCompareResult(expected, actual);
         if (comparisonResult) {
-            resultDiv = $('<table style="border-top: 3px red solid" class="error-occurred" />');
+            resultDiv = $('<table style="border-top: 3px red solid" class="jasmine-failed" />');
             resultDiv.append('<tr><td>Error at Check</td><td>' + checkNbr + ' | ' + timeNow + '</td></tr>');
             resultDiv.append('<tr><td valign="top" colspan=\'2\'>' + comparisonResult + '</td></tr>');
             resultDiv.append('<tr><td valign="top">Expected:</td><td>' + expectedString + '</td></tr>');
@@ -62,6 +63,14 @@ module TestUtils {
             this.onreadystatechange();
         }
     };
+
+    // The factory has to always return this one mock XMLHttpRequest, so in the Jasmine tests
+    // we can spy on it.
+    export var xMLHttpRequestMock = new TestUtils.XMLHttpRequestMock();
+
+    export function createXMLHttpRequestMock(): XMLHttpRequest {
+        return <any>TestUtils.xMLHttpRequestMock;
+    }
 
     function FormatResult(idx: number, fieldName: string, expected: string, actual: string): string {
         return "idx: " + idx + "</br>field: " + fieldName + "</br>expected: " + expected +"</br>actual: "+ actual;

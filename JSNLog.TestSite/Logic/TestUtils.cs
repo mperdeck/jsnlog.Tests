@@ -87,7 +87,7 @@ namespace JSNLog.TestSite.Logic
             sb.AppendLine(@"
                 <script type=""text/javascript"">
                 var __jsnlog_configure_generated = __jsnlog_configure;
-                __jsnlog_configure = function (JL) {                    JL._XMLHttpRequest = TestUtils.XMLHttpRequestMock;
+                __jsnlog_configure = function (JL) {                    JL._createXMLHttpRequest = TestUtils.createXMLHttpRequestMock;
                     if (__jsnlog_configure_generated) { __jsnlog_configure_generated(JL); }
                 };
                 </script>");

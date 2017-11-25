@@ -29,6 +29,7 @@
     </NuGetPackageImportStamp>
     <TypeScriptToolsVersion>2.2</TypeScriptToolsVersion>
     <TargetFrameworkProfile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -129,6 +130,15 @@
     <Content Include="Global.asax" />
     <Content Include="Html\exceptiontests.html" />
     <Content Include="Html\requirejstest.html" />
+    <Content Include="JasmineTests\lib\jasmine-2.8.0\boot.js" />
+    <Content Include="JasmineTests\lib\jasmine-2.8.0\console.js" />
+    <Content Include="JasmineTests\lib\jasmine-2.8.0\jasmine-html.js" />
+    <Content Include="JasmineTests\lib\jasmine-2.8.0\jasmine.css" />
+    <Content Include="JasmineTests\lib\jasmine-2.8.0\jasmine.js" />
+    <Content Include="JasmineTests\lib\jasmine-2.8.0\jasmine_favicon.png" />
+    <Content Include="JasmineTests\SpecRunner.html" />
+    <Content Include="JasmineTests\spec\SimpleLoggingSpec.js" />
+    <Content Include="JasmineTests\spec\SpecHelper.js" />
     <Content Include="scripts\ai.0.22.19-build00125.js" />
     <Content Include="scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="scripts\exceptiontests.js" />
@@ -168,6 +178,7 @@
     <Content Include="Views\Home\RequestIdTest.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="JasmineTests\MIT.LICENSE" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

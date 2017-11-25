@@ -5,7 +5,7 @@
 
 require(["libs/jsnlog"], function () {
 
-    JL._XMLHttpRequest = TestUtils.XMLHttpRequestMock;
+    JL._createXMLHttpRequest = TestUtils.createXMLHttpRequestMock;
 
     var a0 = JL.createAjaxAppender('da1');
     a0.setOptions({ "url": "http://dummy.com/da1" });
