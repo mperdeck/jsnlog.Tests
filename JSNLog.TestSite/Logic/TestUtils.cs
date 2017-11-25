@@ -75,6 +75,29 @@ namespace JSNLog.TestSite.Logic
             return js;
         }
 
+        public static void AddSetXMLHttpRequest(StringBuilder sb)
+        {
+            // The Configure method generates code that creates appenders in function __jsnlog_configure.
+            // That function is called when jsnlog.js ends loading.
+            // If you do not set JL._XMLHttpRequest before __jsnlog_configure is called, the appenders will use the standard
+            // XMLHttpRequest object.
+            //
+            // So, create a new method __jsnlog_configure that first sets JL._XMLHttpRequest and then calls the
+            // generated __jsnlog_configure.
+            sb.AppendLine(@"
+                <script type=""text/javascript"">
+                var __jsnlog_configure_generated = __jsnlog_configure;
+                __jsnlog_configure = function (JL) {                    JL._XMLHttpRequest = TestUtils.XMLHttpRequestMock;
+                    if (__jsnlog_configure_generated) { __jsnlog_configure_generated(JL); }
+                };
+                </script>");
+        }
+
+        public static void AddLoadJsnlogJs(StringBuilder sb)
+        {
+            sb.AppendLine(@"<script type=""text/javascript"" src=""/scripts/libs/jsnlog.js""></script>");
+        }
+
         /// <summary>
         /// Returns all javascript to set up a test.
         /// The generated javascript is within an immediately executing function, so it sits in its own namespace.
@@ -102,22 +125,8 @@ namespace JSNLog.TestSite.Logic
             var jsnlogJavaScriptConfig = JSNLog.JavascriptLogging.Configure(); 
             sb.AppendLine(jsnlogJavaScriptConfig);
 
-            // The Configure method generates code that creates appenders in function __jsnlog_configure.
-            // That function is called when jsnlog.js ends loading.
-            // If you do not set JL._XMLHttpRequest before __jsnlog_configure is called, the appenders will use the standard
-            // XMLHttpRequest object.
-            //
-            // So, create a new method __jsnlog_configure that first sets JL._XMLHttpRequest and then calls the
-            // generated __jsnlog_configure.
-            sb.AppendLine(@"
-                <script type=""text/javascript"">
-                var __jsnlog_configure_generated = __jsnlog_configure;
-                __jsnlog_configure = function (JL) {                    JL._XMLHttpRequest = TestUtils.XMLHttpRequestMock;
-                    __jsnlog_configure_generated(JL);
-                };
-                </script>");
-
-            sb.AppendLine(@"<script type=""text/javascript"" src=""/scripts/libs/jsnlog.js""></script>");
+            AddSetXMLHttpRequest(sb);
+            AddLoadJsnlogJs(sb);
 
             sb.AppendLine(@"<script type=""text/javascript"">");
             sb.AppendLine("function start() {");

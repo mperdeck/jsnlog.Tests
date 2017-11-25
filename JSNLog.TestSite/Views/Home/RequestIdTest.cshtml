@@ -1,6 +1,8 @@
 ﻿@using JSNLog
 @using System.Web;
 @using JSNLog.Tests.Common;
+@using System.Text;
+@using JSNLog.TestSite.Logic;
 
     <h2>RequestIdTest</h2>
     @{ 
@@ -8,6 +10,13 @@
     }
 
     @Html.Raw(JSNLog.JavascriptLogging.Configure(ViewBag.PassedInRequestId))
+
+    @{ 
+        var sb = new StringBuilder();
+        TestUtils.AddSetXMLHttpRequest(sb);
+        TestUtils.AddLoadJsnlogJs(sb);
+    }
+    @Html.Raw(sb.ToString())
 
     <div id="IdFromController">@ViewBag.RequestId</div>
     <div id="IdFromView">@HttpContext.Current.RequestId()</div>
