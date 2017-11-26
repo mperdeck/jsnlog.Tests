@@ -1,5 +1,5 @@
 /// <reference types="jquery"/>
-// / <reference path="jquery.d.ts"/>
+/// <reference types="jasmine"/>
 /// <reference path="../../../jsnlog.js/jsnlog.ts"/>
 var JLTestUtils;
 (function (JLTestUtils) {
@@ -61,16 +61,50 @@ var JLTestUtils;
     }
     JLTestUtils.createXMLHttpRequestMock = createXMLHttpRequestMock;
     JLTestUtils.testNbr = 0;
-    function runTest(test) {
+    function nextTestNbr() {
         var testNbrString = JLTestUtils.testNbr.toString();
-        var testappender = JL.createAjaxAppender("testappender" + testNbrString);
-        var testLogger = JL('testlogger' + testNbrString);
-        testLogger.setOptions({ appenders: [testappender] });
+        JLTestUtils.testNbr++;
+        return testNbrString;
+    }
+    function runTestMultiple(nbrLoggers, nbrAppenders, test) {
+        var appenders = [];
+        var loggers = [];
+        for (var a = 0; a < nbrAppenders; a++) {
+            var testappender = JL.createAjaxAppender("testappender" + nextTestNbr());
+            appenders.push(testappender);
+        }
+        for (var lg = 0; lg < nbrLoggers; lg++) {
+            var testLogger = JL('testlogger' + nextTestNbr());
+            testLogger.setOptions({ appenders: appenders });
+            loggers.push(testLogger);
+        }
         var xhrMock = JLTestUtils.xMLHttpRequestMock;
         var sendCalls = JLTestUtils.xMLHttpRequestMock.send.calls;
-        test(testLogger, testappender, xhrMock, sendCalls);
+        test(loggers, appenders, xhrMock, sendCalls);
+    }
+    JLTestUtils.runTestMultiple = runTestMultiple;
+    function runTest(test) {
+        JLTestUtils.runTestMultiple(1, 1, function (loggers, appenders, xhr, callsToSend) {
+            test(loggers[0], appenders[0], xhr, callsToSend);
+        });
     }
     JLTestUtils.runTest = runTest;
+    function logMessages(logger, level, nbrMessagesToLog, messageIdxRef) {
+        for (var m = 0; m < nbrMessagesToLog; m++) {
+            logger.log(level, "Event " + messageIdxRef.messageIdx.toString());
+            messageIdxRef.messageIdx++;
+        }
+    }
+    JLTestUtils.logMessages = logMessages;
+    function checkMessages(nbrOfMessagesExpected, callsToSend) {
+        // Check that the expected nbr of messages sent
+        expect(callsToSend.count()).toEqual(nbrOfMessagesExpected);
+        // For each message sent, check its content
+        for (var m = 0; m < nbrOfMessagesExpected; m++) {
+            expect(callsToSend.argsFor(m)[0]).toContain('"m":"Event ' + m.toString() + '"');
+        }
+    }
+    JLTestUtils.checkMessages = checkMessages;
     function FormatResult(idx, fieldName, expected, actual) {
         return "idx: " + idx + "</br>field: " + fieldName + "</br>expected: " + expected + "</br>actual: " + actual;
     }

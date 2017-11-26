@@ -1,13 +1,17 @@
 /// <reference path="../../scripts/JLTestUtils.ts"/>
 /// <reference path="../../../../jsnlog.js/jsnlog.ts"/>
+
 describe("maxMessages", function () {
     describe("Simple", function () {
+
         beforeEach(function () {
             JL.setOptions({ maxMessages: 10 });
         });
+
         afterEach(function () {
             JL.setOptions({ maxMessages: null });
         });
+
         // nbrLoggers, nbrAppenders, nbr of messages that should have been sent, array with nbr messages through each logger
         var scenarios = [
             // Log below the limit
@@ -23,59 +27,66 @@ describe("maxMessages", function () {
             { nbrLoggers: 1, nbrAppenders: 2, nbrOfMessagesExpected: 10, nbrMessagesEachLogger: 6 },
             { nbrLoggers: 3, nbrAppenders: 1, nbrOfMessagesExpected: 10, nbrMessagesEachLogger: 5 }
         ];
-        var _loop_1 = function (s) {
-            title = "Simple case: " +
+
+        // test each scenario
+        for (let s = 0; s < scenarios.length; s++) {
+            var title =
+                "Simple case: " +
                 scenarios[s].nbrAppenders.toString() + " appenders, " +
                 scenarios[s].nbrLoggers.toString() + " loggers, " +
                 scenarios[s].nbrOfMessagesExpected.toString() + " messages expected to be sent";
+
             it(title, function () {
-                JLTestUtils.runTestMultiple(scenarios[s].nbrLoggers, scenarios[s].nbrAppenders, function (loggers, appenders, xhr, callsToSend) {
-                    var messageIdxRef = { messageIdx: 0 };
-                    for (var lg = 0; lg < scenarios[s].nbrLoggers; lg++) {
-                        JLTestUtils.logMessages(loggers[lg], JL.getFatalLevel(), scenarios[s].nbrMessagesEachLogger, messageIdxRef);
-                    }
-                    JLTestUtils.checkMessages(scenarios[s].nbrOfMessagesExpected, callsToSend);
-                });
+
+                JLTestUtils.runTestMultiple(
+                    scenarios[s].nbrLoggers, scenarios[s].nbrAppenders, function (loggers, appenders, xhr, callsToSend) {
+                        let messageIdxRef = { messageIdx: 0 };
+                        for (let lg = 0; lg < scenarios[s].nbrLoggers; lg++) {
+                            JLTestUtils.logMessages(loggers[lg], JL.getFatalLevel(), scenarios[s].nbrMessagesEachLogger, messageIdxRef);
+                        }
+
+                        JLTestUtils.checkMessages(scenarios[s].nbrOfMessagesExpected, callsToSend);
+                    });
             }); // it
-        };
-        var title;
-        // test each scenario
-        for (var s = 0; s < scenarios.length; s++) {
-            _loop_1(s);
         } // for
     });
+
     describe("Used with trace buffer", function () {
         var bufferScenarios = [
             // Log below the limit
             { nbrNormalMessages: 1, nbrTraceMessages: 1, nbrFatalMessages: 2, nbrOfMessagesExpected: 2 },
         ];
-        var _loop_2 = function (s) {
-            title = "Using trace messages buffer: " +
+
+        // test each scenario
+        for (let s = 0; s < bufferScenarios.length; s++) {
+            var title =
+                "Using trace messages buffer: " +
                 bufferScenarios[s].nbrNormalMessages.toString() + " normal messages, " +
                 bufferScenarios[s].nbrTraceMessages.toString() + " trace messages, " +
                 bufferScenarios[s].nbrFatalMessages.toString() + " fatal messages, " +
                 bufferScenarios[s].nbrOfMessagesExpected.toString() + " messages expected to be sent";
+
             it(title, function () {
-                JLTestUtils.runTest(function (logger, appender, xhr, callsToSend) {
-                    appender.setOptions({
-                        level: JL.getInfoLevel(),
-                        storeInBufferLevel: JL.getTraceLevel(),
-                        sendWithBufferLevel: JL.getFatalLevel(),
-                        bufferSize: 10
+
+                JLTestUtils.runTest(
+                    function (logger, appender, xhr, callsToSend) {
+
+                        appender.setOptions({
+                            level: JL.getInfoLevel(),
+                            storeInBufferLevel: JL.getTraceLevel(),
+                            sendWithBufferLevel: JL.getFatalLevel(),
+                            bufferSize: 10
+                        })
+
+                        let messageIdxRef = { messageIdx: 0 };
+                        JLTestUtils.logMessages(logger, JL.getTraceLevel(), bufferScenarios[s].nbrTraceMessages, messageIdxRef);
+                        JLTestUtils.logMessages(logger, JL.getWarnLevel(), bufferScenarios[s].nbrNormalMessages, messageIdxRef);
+                        JLTestUtils.logMessages(logger, JL.getFatalLevel(), bufferScenarios[s].nbrFatalMessages, messageIdxRef);
+
+                        JLTestUtils.checkMessages(bufferScenarios[s].nbrOfMessagesExpected, callsToSend);
                     });
-                    var messageIdxRef = { messageIdx: 0 };
-                    JLTestUtils.logMessages(logger, JL.getTraceLevel(), bufferScenarios[s].nbrTraceMessages, messageIdxRef);
-                    JLTestUtils.logMessages(logger, JL.getWarnLevel(), bufferScenarios[s].nbrNormalMessages, messageIdxRef);
-                    JLTestUtils.logMessages(logger, JL.getFatalLevel(), bufferScenarios[s].nbrFatalMessages, messageIdxRef);
-                    JLTestUtils.checkMessages(bufferScenarios[s].nbrOfMessagesExpected, callsToSend);
-                });
             }); // it
-        };
-        var title;
-        // test each scenario
-        for (var s = 0; s < bufferScenarios.length; s++) {
-            _loop_2(s);
         } // for
     });
 });
-//# sourceMappingURL=MaxMessagesSpec.js.map
+
