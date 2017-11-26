@@ -1,4 +1,5 @@
 ﻿/// <reference types="jquery"/>
+/// <reference types="jasmine"/>
 /// <reference path="../../../jsnlog.js/jsnlog.ts"/>
 
 module JLTestUtils {
@@ -74,18 +75,58 @@ module JLTestUtils {
 
     export var testNbr: number = 0;
 
-    export function runTest(test: (logger: JL.JSNLogLogger, appender: JL.JSNLogAjaxAppender, xhr: XMLHttpRequest, callsToSend: any) => void) {
-
+    function nextTestNbr(): string {
         var testNbrString: string = JLTestUtils.testNbr.toString();
+        JLTestUtils.testNbr++;
+        return testNbrString;
+    }
 
-        var testappender = JL.createAjaxAppender("testappender" + testNbrString);
-        var testLogger = JL('testlogger' + testNbrString); 
-        testLogger.setOptions({ appenders: [testappender] })
+    export function runTestMultiple(
+        nbrLoggers: number, nbrAppenders: number,
+        test: (
+            loggers: JL.JSNLogLogger[], appenders: JL.JSNLogAjaxAppender[], xhr: XMLHttpRequest, callsToSend: any) => void) {
+
+        var appenders: JL.JSNLogAjaxAppender[] = [];
+        var loggers: JL.JSNLogLogger[] = [];
+
+        for (let a: number = 0; a < nbrAppenders; a++) {
+            var testappender = JL.createAjaxAppender("testappender" + nextTestNbr());
+            appenders.push(testappender);
+        }
+
+        for (let lg: number = 0; lg < nbrLoggers; lg++) {
+            var testLogger = JL('testlogger' + nextTestNbr());
+            testLogger.setOptions({ appenders: appenders })
+            loggers.push(testLogger);
+        }
 
         var xhrMock = JLTestUtils.xMLHttpRequestMock;
         var sendCalls = (<any>JLTestUtils.xMLHttpRequestMock.send).calls;
 
-        test(testLogger, testappender, <any>xhrMock, sendCalls);
+        test(loggers, appenders, <any>xhrMock, sendCalls);
+    }
+
+    export function runTest(test: (logger: JL.JSNLogLogger, appender: JL.JSNLogAjaxAppender, xhr: XMLHttpRequest, callsToSend: any) => void) {
+        JLTestUtils.runTestMultiple(1, 1, function (loggers: JL.JSNLogLogger[], appenders: JL.JSNLogAjaxAppender[], xhr: XMLHttpRequest, callsToSend: any) {
+            test(loggers[0], appenders[0], xhr, callsToSend);
+        });
+    }
+
+    export function logMessages(logger: JL.JSNLogLogger, level: number, nbrMessagesToLog: number, messageIdxRef: { messageIdx: number }): void {
+        for (let m = 0; m < nbrMessagesToLog; m++) {
+            logger.log(level, "Event " + messageIdxRef.messageIdx.toString());
+            messageIdxRef.messageIdx++;
+        }
+    }
+
+    export function checkMessages(nbrOfMessagesExpected: number, callsToSend: any) {
+        // Check that the expected nbr of messages sent
+        expect(callsToSend.count()).toEqual(nbrOfMessagesExpected);
+
+        // For each message sent, check its content
+        for (let m = 0; m < nbrOfMessagesExpected; m++) {
+            expect(callsToSend.argsFor(m)[0]).toContain('"m":"Event ' + m.toString() + '"');
+        }
     }
 
     function FormatResult(idx: number, fieldName: string, expected: string, actual: string): string {
