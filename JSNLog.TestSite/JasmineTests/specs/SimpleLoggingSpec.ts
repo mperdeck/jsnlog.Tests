@@ -1,6 +1,11 @@
 /// <reference path="../../scripts/JLTestUtils.ts"/>
 /// <reference path="../../../../jsnlog.js/jsnlog.ts"/>
 
+// The default appender gets created right after the JL object is created, inside jsnlog.js.
+// So that will have a normal XmlHttpRequest object.
+// In your tests (not here), you need to create new loggers and appenders, so the tests do not
+// influence each other.
+
 describe("Simple Logging", function () {
 
     it("should log fatal event", function () {

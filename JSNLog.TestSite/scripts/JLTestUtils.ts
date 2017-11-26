@@ -86,6 +86,19 @@ module JLTestUtils {
         test: (
             loggers: JL.JSNLogLogger[], appenders: JL.JSNLogAjaxAppender[], xhr: XMLHttpRequest, callsToSend: any) => void) {
 
+        // Create a new mock object for each test
+        var xhrMock = new JLTestUtils.XMLHttpRequestMock();
+
+        JLTestUtils.xMLHttpRequestMock = xhrMock;
+        spyOn(xhrMock, 'send').and.callThrough();
+        var sendCalls = (<any>xhrMock.send).calls;
+
+        // This must be done before creating any appenders, because the appenders will use _createXMLHttpRequest
+        // to create the xhr object.
+        JL._createXMLHttpRequest = JLTestUtils.createXMLHttpRequestMock;
+
+        // ------------
+
         var appenders: JL.JSNLogAjaxAppender[] = [];
         var loggers: JL.JSNLogLogger[] = [];
 
@@ -99,9 +112,6 @@ module JLTestUtils {
             testLogger.setOptions({ appenders: appenders })
             loggers.push(testLogger);
         }
-
-        var xhrMock = JLTestUtils.xMLHttpRequestMock;
-        var sendCalls = (<any>JLTestUtils.xMLHttpRequestMock.send).calls;
 
         test(loggers, appenders, <any>xhrMock, sendCalls);
     }
@@ -119,13 +129,35 @@ module JLTestUtils {
         }
     }
 
-    export function checkMessages(nbrOfMessagesExpected: number, callsToSend: any) {
+    // If messageIdxIncrement is 2, then the expected message index gets increments once for every 2 messages.
+    // Use this when you have a logger logging through 2 appenders.
+    //
+    // expectedMessageIndexes is an array of arrays of indexes.
+    // Each message is checked to ensure it contains all the given indexes.
+    export function checkMessages(nbrOfMessagesExpected: number, callsToSend: any,
+        messageIdxIncrement: number = 1, expectedMessageIndexes: number[][] = null) {
         // Check that the expected nbr of messages sent
-        expect(callsToSend.count()).toEqual(nbrOfMessagesExpected);
+        var actualCount: number = callsToSend.count(); 
+        expect(actualCount).toEqual(nbrOfMessagesExpected);
+
+        // Build list of expected messageIdxs if not given
+        if (!expectedMessageIndexes) {
+            expectedMessageIndexes = [];
+
+            for (let m = 0; m < nbrOfMessagesExpected; m++) {
+                var messageIdx = Math.floor(m / messageIdxIncrement);
+                expectedMessageIndexes.push([messageIdx]);
+            }
+        }
 
         // For each message sent, check its content
         for (let m = 0; m < nbrOfMessagesExpected; m++) {
-            expect(callsToSend.argsFor(m)[0]).toContain('"m":"Event ' + m.toString() + '"');
+            var args = callsToSend.argsFor(m);
+            var argValue0 = args[0];
+
+            for (let i = 0; i < expectedMessageIndexes[m].length; i++) {
+                expect(argValue0).toContain('"m":"Event ' + expectedMessageIndexes[m][i].toString() + '"');
+            }
         }
     }
 

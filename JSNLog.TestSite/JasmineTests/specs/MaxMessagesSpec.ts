@@ -2,15 +2,16 @@
 /// <reference path="../../../../jsnlog.js/jsnlog.ts"/>
 
 describe("maxMessages", function () {
+
+    beforeEach(function () {
+        JL.setOptions({ maxMessages: 10 });
+    });
+
+    afterEach(function () {
+        JL.setOptions({ maxMessages: null });
+    });
+
     describe("Simple", function () {
-
-        beforeEach(function () {
-            JL.setOptions({ maxMessages: 10 });
-        });
-
-        afterEach(function () {
-            JL.setOptions({ maxMessages: null });
-        });
 
         // nbrLoggers, nbrAppenders, nbr of messages that should have been sent, array with nbr messages through each logger
         var scenarios = [
@@ -45,7 +46,8 @@ describe("maxMessages", function () {
                             JLTestUtils.logMessages(loggers[lg], JL.getFatalLevel(), scenarios[s].nbrMessagesEachLogger, messageIdxRef);
                         }
 
-                        JLTestUtils.checkMessages(scenarios[s].nbrOfMessagesExpected, callsToSend);
+                        // When there are 2 appenders, the same message (with the same messageIdx) will be logged twice.
+                        JLTestUtils.checkMessages(scenarios[s].nbrOfMessagesExpected, callsToSend, scenarios[s].nbrAppenders);
                     });
             }); // it
         } // for
@@ -53,8 +55,10 @@ describe("maxMessages", function () {
 
     describe("Used with trace buffer", function () {
         var bufferScenarios = [
-            // Log below the limit
-            { nbrNormalMessages: 1, nbrTraceMessages: 1, nbrFatalMessages: 2, nbrOfMessagesExpected: 2 },
+            // Log below the limit. 3 messages are expected, because the trace messages and the fatal message go out in 1 batch
+            { nbrNormalMessages: 1, nbrTraceMessages: 4, nbrFatalMessages: 2, nbrOfMessagesExpected: 3, expectedMessageIndexes: [[4], [5, 0, 1, 2, 3], [6]] },
+            // Log over the limit. Note that the first fatal message is sent before the trace messages.
+            { nbrNormalMessages: 3, nbrTraceMessages: 9, nbrFatalMessages: 2, nbrOfMessagesExpected: 4, expectedMessageIndexes: [[9],[10],[11],[12,0,1,2,3,4,5,6]] },
         ];
 
         // test each scenario
@@ -75,15 +79,20 @@ describe("maxMessages", function () {
                             level: JL.getInfoLevel(),
                             storeInBufferLevel: JL.getTraceLevel(),
                             sendWithBufferLevel: JL.getFatalLevel(),
-                            bufferSize: 10
-                        })
+                            bufferSize: 10,
+                            sendTimeout: 2147483647
+                        });
+
+                        logger.setOptions({
+                            level: JL.getTraceLevel()
+                        });
 
                         let messageIdxRef = { messageIdx: 0 };
                         JLTestUtils.logMessages(logger, JL.getTraceLevel(), bufferScenarios[s].nbrTraceMessages, messageIdxRef);
                         JLTestUtils.logMessages(logger, JL.getWarnLevel(), bufferScenarios[s].nbrNormalMessages, messageIdxRef);
                         JLTestUtils.logMessages(logger, JL.getFatalLevel(), bufferScenarios[s].nbrFatalMessages, messageIdxRef);
 
-                        JLTestUtils.checkMessages(bufferScenarios[s].nbrOfMessagesExpected, callsToSend);
+                        JLTestUtils.checkMessages(bufferScenarios[s].nbrOfMessagesExpected, callsToSend, 1, bufferScenarios[s].expectedMessageIndexes);
                     });
             }); // it
         } // for
