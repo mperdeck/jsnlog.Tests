@@ -41,8 +41,8 @@ module JLTestUtils {
 
     export class XMLHttpRequestMock {
         onreadystatechange: () => void;
-        readyState: number;
-        status: number;
+        readyState: number = 4;
+        status: number = 200;
 
         private _url: string;
 
@@ -59,8 +59,6 @@ module JLTestUtils {
             var item = JSON.parse(json);
             (<any>window)[this._url] = (<any>window)[this._url].concat(item.lg);
 
-            this.status = 200;
-            this.readyState = 4;
             this.onreadystatechange();
         }
     };
@@ -84,13 +82,14 @@ module JLTestUtils {
     export function runTestMultiple(
         nbrLoggers: number, nbrAppenders: number,
         test: (
-            loggers: JL.JSNLogLogger[], appenders: JL.JSNLogAjaxAppender[], xhr: XMLHttpRequest, callsToSend: any) => void) {
+            loggers: JL.JSNLogLogger[], appenders: JL.JSNLogAjaxAppender[], xhr: XMLHttpRequestMock, callsToSend: any) => void) {
 
         // Create a new mock object for each test
         var xhrMock = new JLTestUtils.XMLHttpRequestMock();
 
         JLTestUtils.xMLHttpRequestMock = xhrMock;
         spyOn(xhrMock, 'send').and.callThrough();
+        spyOn(xhrMock, 'abort');
         var sendCalls = (<any>xhrMock.send).calls;
 
         // This must be done before creating any appenders, because the appenders will use _createXMLHttpRequest
@@ -113,11 +112,11 @@ module JLTestUtils {
             loggers.push(testLogger);
         }
 
-        test(loggers, appenders, <any>xhrMock, sendCalls);
+        test(loggers, appenders, xhrMock, sendCalls);
     }
 
-    export function runTest(test: (logger: JL.JSNLogLogger, appender: JL.JSNLogAjaxAppender, xhr: XMLHttpRequest, callsToSend: any) => void) {
-        JLTestUtils.runTestMultiple(1, 1, function (loggers: JL.JSNLogLogger[], appenders: JL.JSNLogAjaxAppender[], xhr: XMLHttpRequest, callsToSend: any) {
+    export function runTest(test: (logger: JL.JSNLogLogger, appender: JL.JSNLogAjaxAppender, xhr: XMLHttpRequestMock, callsToSend: any) => void) {
+        JLTestUtils.runTestMultiple(1, 1, function (loggers: JL.JSNLogLogger[], appenders: JL.JSNLogAjaxAppender[], xhr: XMLHttpRequestMock, callsToSend: any) {
             test(loggers[0], appenders[0], xhr, callsToSend);
         });
     }
