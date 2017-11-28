@@ -13,7 +13,7 @@ describe("Server Unavailable", function () {
 
     var initTest = function (appender: JL.JSNLogAjaxAppender) {
         appender.setOptions({
-            maxBatchSize: 3,
+            maxBatchSize: 4,
             sendTimeout: 10000
         });
     }
@@ -22,22 +22,52 @@ describe("Server Unavailable", function () {
         {
             nbrMessagesDuringOutage: 1, expected1: [[0], [1]], expected2: [[0], [1], [1]], expected3: [[0], [1], [1], [2]],
             extraExpectedMessageAfterOutageContains: null,
-            extraExpectedMessageAfterOutageIdx: 0
+            extraExpectedMessageAfterOutageIdx: 0,
+            haveSecondOutagePeriod: false,
+            nbrMessagesDuringSecondOutagePeriod: 0
         },
         // The first log attempt during outage will try to send only the first message. 
         // With second log attempt, send will not be called because first send is still outstanding.
         {
             nbrMessagesDuringOutage: 2, expected1: [[0], [1]], expected2: [[0], [1], [1, 2]], expected3: [[0], [1], [1, 2], [3]],
             extraExpectedMessageAfterOutageContains: null,
-            extraExpectedMessageAfterOutageIdx: 0
+            extraExpectedMessageAfterOutageIdx: 0,
+            haveSecondOutagePeriod: false,
+            nbrMessagesDuringSecondOutagePeriod: 0
         },
-        // maxBatchSize is 3, so 4th and 5th log message during outage will be dropped.
+        // maxBatchSize is 4, so 5th and 6th log message during outage will be dropped.
         // After the messages that were buffered during the outage were successfully sent, jsnlog.js should also send
         // (in a separate message) the WARN about losing messages.
         {
-            nbrMessagesDuringOutage: 5, expected1: [[0], [1]], expected2: [[0], [1], [1, 2, 3], []], expected3: [[0], [1], [1, 2, 3], [], [6]],
+            nbrMessagesDuringOutage: 6, expected1: [[0], [1]], expected2: [[0], [1], [1, 2, 3, 4], []], expected3: [[0], [1], [1, 2, 3, 4], [], [7]],
             extraExpectedMessageAfterOutageContains: "Lost 2 messages while connection with the server was down",
-            extraExpectedMessageAfterOutageIdx: 3
+            extraExpectedMessageAfterOutageIdx: 3,
+            haveSecondOutagePeriod: false,
+            nbrMessagesDuringSecondOutagePeriod: 0
+        },
+        {
+            // 2 outage periods, no messages during second outage period, maxBatchSize not exceeded
+            nbrMessagesDuringOutage: 1, expected1: [[0], [1]], expected2: [[0], [1], [1], [1]], expected3: [[0], [1], [1], [1], [2]],
+            extraExpectedMessageAfterOutageContains: null,
+            extraExpectedMessageAfterOutageIdx: 0,
+            haveSecondOutagePeriod: true,
+            nbrMessagesDuringSecondOutagePeriod: 0
+        },
+        {
+            // 2 outage periods, messages during second outage period, maxBatchSize not exceeded
+            nbrMessagesDuringOutage: 2, expected1: [[0], [1]], expected2: [[0], [1], [1, 2], [1, 2, 3]], expected3: [[0], [1], [1, 2], [1, 2, 3], [4]],
+            extraExpectedMessageAfterOutageContains: null,
+            extraExpectedMessageAfterOutageIdx: 0,
+            haveSecondOutagePeriod: true,
+            nbrMessagesDuringSecondOutagePeriod: 1
+        },
+        {
+            // 2 outage periods, 3 messages during second outage period, maxBatchSize exceeded 
+            nbrMessagesDuringOutage: 2, expected1: [[0], [1]], expected2: [[0], [1], [1, 2], [1, 2, 3, 4], []], expected3: [[0], [1], [1, 2], [1, 2, 3, 4], [], [6]],
+            extraExpectedMessageAfterOutageContains: "Lost 1 messages while connection with the server was down",
+            extraExpectedMessageAfterOutageIdx: 4,
+            haveSecondOutagePeriod: true,
+            nbrMessagesDuringSecondOutagePeriod: 3
         }
     ];
 
@@ -55,16 +85,21 @@ describe("Server Unavailable", function () {
 
                 // Internet is accessible
                 let messageIdxRef = { messageIdx: 0 };
-                JLTestUtils.logMessages(logger, JL.getWarnLevel(), 1, messageIdxRef);
+                JLTestUtils.logMessages(logger, JL.getInfoLevel(), 1, messageIdxRef);
 
                 // Internet no longer accessible. Note that jsnlog.js should retry after 10000ms.
                 xhr.status = 0;
 
-                JLTestUtils.logMessages(logger, JL.getWarnLevel(), scenarios[s].nbrMessagesDuringOutage, messageIdxRef);
+                JLTestUtils.logMessages(logger, JL.getInfoLevel(), scenarios[s].nbrMessagesDuringOutage, messageIdxRef);
 
                 // Make sure that send has been called second time
                 JLTestUtils.checkMessages(scenarios[s].expected1.length, callsToSend, 1, scenarios[s].expected1);
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
+
+                if (scenarios[s].haveSecondOutagePeriod) {
+                    jasmine.clock().tick(10001);
+                    JLTestUtils.logMessages(logger, JL.getInfoLevel(), scenarios[s].nbrMessagesDuringSecondOutagePeriod, messageIdxRef);
+                }
 
                 // Internet accessible again
                 xhr.status = 200;
@@ -89,7 +124,7 @@ describe("Server Unavailable", function () {
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
 
                 // It should now be sending messages normally again, without resending
-                JLTestUtils.logMessages(logger, JL.getWarnLevel(), 1, messageIdxRef);
+                JLTestUtils.logMessages(logger, JL.getInfoLevel(), 1, messageIdxRef);
                 JLTestUtils.checkMessages(scenarios[s].expected3.length, callsToSend, 1, scenarios[s].expected3);
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
 
