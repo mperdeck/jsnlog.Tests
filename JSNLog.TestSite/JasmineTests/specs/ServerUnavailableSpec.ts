@@ -19,12 +19,26 @@ describe("Server Unavailable", function () {
     }
 
     var scenarios = [
-        { nbrMessagesDuringOutage: 1, expected1: [[0], [1]], expected2: [[0], [1], [1]], expected3: [[0], [1], [1], [2]] },
+        {
+            nbrMessagesDuringOutage: 1, expected1: [[0], [1]], expected2: [[0], [1], [1]], expected3: [[0], [1], [1], [2]],
+            extraExpectedMessageAfterOutageContains: null,
+            extraExpectedMessageAfterOutageIdx: 0
+        },
         // The first log attempt during outage will try to send only the first message. 
         // With second log attempt, send will not be called because first send is still outstanding.
-        { nbrMessagesDuringOutage: 2, expected1: [[0], [1]], expected2: [[0], [1], [1, 2]], expected3: [[0], [1], [1, 2], [3]] },
-        // maxBatchSize is 3, so 4th log message during outage will be dropped
-        { nbrMessagesDuringOutage: 4, expected1: [[0], [1]], expected2: [[0], [1], [1, 2, 3]], expected3: [[0], [1], [1, 2, 3], [5]] }
+        {
+            nbrMessagesDuringOutage: 2, expected1: [[0], [1]], expected2: [[0], [1], [1, 2]], expected3: [[0], [1], [1, 2], [3]],
+            extraExpectedMessageAfterOutageContains: null,
+            extraExpectedMessageAfterOutageIdx: 0
+        },
+        // maxBatchSize is 3, so 4th and 5th log message during outage will be dropped.
+        // After the messages that were buffered during the outage were successfully sent, jsnlog.js should also send
+        // (in a separate message) the WARN about losing messages.
+        {
+            nbrMessagesDuringOutage: 5, expected1: [[0], [1]], expected2: [[0], [1], [1, 2, 3], []], expected3: [[0], [1], [1, 2, 3], [], [6]],
+            extraExpectedMessageAfterOutageContains: "Lost 2 messages while connection with the server was down",
+            extraExpectedMessageAfterOutageIdx: 3
+        }
     ];
 
     // test each scenario
@@ -46,10 +60,10 @@ describe("Server Unavailable", function () {
                 // Internet no longer accessible. Note that jsnlog.js should retry after 10000ms.
                 xhr.status = 0;
 
-                JLTestUtils.logMessages(logger, JL.getWarnLevel(), 1, messageIdxRef);
+                JLTestUtils.logMessages(logger, JL.getWarnLevel(), scenarios[s].nbrMessagesDuringOutage, messageIdxRef);
 
-                // Make sure that send has been called twice
-                JLTestUtils.checkMessages(2, callsToSend, 1, [[0], [1]]);
+                // Make sure that send has been called second time
+                JLTestUtils.checkMessages(scenarios[s].expected1.length, callsToSend, 1, scenarios[s].expected1);
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
 
                 // Internet accessible again
@@ -59,22 +73,28 @@ describe("Server Unavailable", function () {
                 jasmine.clock().tick(10001);
 
                 // It should have resend the message
-                JLTestUtils.checkMessages(3, callsToSend, 1, [[0], [1], [1]]);
+                JLTestUtils.checkMessages(scenarios[s].expected2.length, callsToSend, 1, scenarios[s].expected2);
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
+
+                if (scenarios[s].extraExpectedMessageAfterOutageContains) {
+                    var args = callsToSend.argsFor(scenarios[s].extraExpectedMessageAfterOutageIdx);
+                    var message = args[0];
+                    expect(message).toContain(scenarios[s].extraExpectedMessageAfterOutageContains);
+                }
 
                 // It should have stopped resending the message.
                 // Wait another period and make sure it didn't send anything else
                 jasmine.clock().tick(10001);
-                JLTestUtils.checkMessages(3, callsToSend, 1, [[0], [1], [1]]);
+                JLTestUtils.checkMessages(scenarios[s].expected2.length, callsToSend, 1, scenarios[s].expected2);
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
 
                 // It should now be sending messages normally again, without resending
                 JLTestUtils.logMessages(logger, JL.getWarnLevel(), 1, messageIdxRef);
-                JLTestUtils.checkMessages(4, callsToSend, 1, [[0], [1], [1], [2]]);
+                JLTestUtils.checkMessages(scenarios[s].expected3.length, callsToSend, 1, scenarios[s].expected3);
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
 
                 jasmine.clock().tick(10001);
-                JLTestUtils.checkMessages(4, callsToSend, 1, [[0], [1], [1], [2]]);
+                JLTestUtils.checkMessages(scenarios[s].expected3.length, callsToSend, 1, scenarios[s].expected3);
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
             });
         });
