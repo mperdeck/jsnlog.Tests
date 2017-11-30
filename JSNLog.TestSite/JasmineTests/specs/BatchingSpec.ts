@@ -16,7 +16,7 @@ describe("Batching", function () {
 
     var scenarios = [
         // Batch buffer not full, no timeout
-        { id: 0, test: [{ nbrTrace: 0, nbrFatal: 1, waitMs: _batchTimeoutMs / 2, expected: [] }] },
+  //############      { id: 0, test: [{ nbrTrace: 0, nbrFatal: 1, waitMs: _batchTimeoutMs / 2, expected: [] }] },
         // Batch buffer fills up immediately just
         {
             id: 1, test: [{ nbrTrace: _batchBufferSize - 1, nbrFatal: 1, waitMs: _batchTimeoutMs * 0.95, expected: [[4, 0, 1, 2, 3]] }]
@@ -53,7 +53,8 @@ describe("Batching", function () {
                         batchSize: _batchBufferSize,
                         storeInBufferLevel: JL.getDebugLevel(),
                         level: JL.getWarnLevel(),
-                        sendWithBufferLevel: JL.getFatalLevel()
+                        sendWithBufferLevel: JL.getFatalLevel(),
+                        bufferSize: 30
                     });
 
                     let messageIdxRef = { messageIdx: 0 };
