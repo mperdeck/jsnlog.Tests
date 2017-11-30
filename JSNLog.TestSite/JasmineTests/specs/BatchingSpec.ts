@@ -18,13 +18,12 @@ describe("Batching", function () {
         // Batch buffer not full, no timeout
   //############      { id: 0, test: [{ nbrTrace: 0, nbrFatal: 1, waitMs: _batchTimeoutMs / 2, expected: [] }] },
         // Batch buffer fills up immediately just
-        {
-            id: 1, test: [{ nbrTrace: _batchBufferSize - 1, nbrFatal: 1, waitMs: _batchTimeoutMs * 0.95, expected: [[4, 0, 1, 2, 3]] }]
-        },
+ //###########       { id: 1, test: [{ nbrTrace: _batchBufferSize - 1, nbrFatal: 1, waitMs: _batchTimeoutMs * 0.95, expected: [[4, 0, 1, 2, 3]] }] },
         // Batch buffer fills more than up immediately
-        { id: 2, test: [{ nbrTrace: _batchBufferSize * 1.5, nbrFatal: 1, waitMs: _batchTimeoutMs * 0.95, expected: [[4, 0, 1, 2, 3]] }] },
-        // Batch buffer fills more than up immediately twice over
-        { id: 3, test: [{ nbrTrace: _batchBufferSize * 2.5, nbrFatal: 1, waitMs: _batchTimeoutMs * 0.95, expected: [[9, 0, 1, 2, 3], [4, 5, 6, 7, 8]] }] },
+  //###########      { id: 2, test: [{ nbrTrace: _batchBufferSize * 1.5, nbrFatal: 1, waitMs: _batchTimeoutMs * 0.95, expected: [[4, 0, 1, 2, 3]] }] },
+        // Batch buffer fills more than up immediately twice over. Note that when jsnlog.js decides to send all trace messages,
+        // it puts them in one batch (together with the fatal message if that wasn't sent already)
+        { id: 3, test: [{ nbrTrace: 6, nbrFatal: 8, waitMs: _batchTimeoutMs * 0.95, expected: [[6, 0, 1, 2, 3, 4, 5], [7, 8, 9, 10, 11]] }] },
         // Batch buffer not full, timeout
         { id: 4, test: [{ nbrTrace: 0, nbrFatal: 2, waitMs: _batchTimeoutMs * 1.05, expected: [[0, 1]] }] },
         // Ensure that oldest message waits no longer than timeout
