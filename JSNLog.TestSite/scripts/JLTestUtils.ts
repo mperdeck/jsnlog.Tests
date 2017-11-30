@@ -133,11 +133,14 @@ module JLTestUtils {
     //
     // expectedMessageIndexes is an array of arrays of indexes.
     // Each message is checked to ensure it contains all the given indexes.
-    export function checkMessages(nbrOfMessagesExpected: number, callsToSend: any,
+    export function checkMessages(scenarioId: string, nbrOfMessagesExpected: number, callsToSend: any,
         messageIdxIncrement: number = 1, expectedMessageIndexes: number[][] = null) {
+
         // Check that the expected nbr of messages sent
         var actualCount: number = callsToSend.count(); 
-        expect(actualCount).toEqual(nbrOfMessagesExpected);
+        // Second parameter to toBe is undocumented, lets you print a message if the check fails.
+        // Doesn't work for toEqual.
+        expect(actualCount).toBe(nbrOfMessagesExpected, "scenarioId: " + scenarioId);
 
         // Build list of expected messageIdxs if not given
         if (!expectedMessageIndexes) {
@@ -155,7 +158,10 @@ module JLTestUtils {
             var argValue0 = args[0];
 
             for (let i = 0; i < expectedMessageIndexes[m].length; i++) {
-                expect(argValue0).toContain('"m":"Event ' + expectedMessageIndexes[m][i].toString() + '"');
+                // Second parameter to toContain is undocumented, lets you print a message if the check fails.
+                expect(argValue0).toContain('"m":"Event ' + expectedMessageIndexes[m][i].toString() + '"',
+                    "scenarioNbr: " + scenarioId + ", nbrOfMessagesExpected: " + nbrOfMessagesExpected.toString() +
+                    ", m: " + m.toString() + ", i: " + i.toString());
             }
         }
     }

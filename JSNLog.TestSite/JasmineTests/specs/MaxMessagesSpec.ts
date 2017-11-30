@@ -47,7 +47,7 @@ describe("maxMessages", function () {
                         }
 
                         // When there are 2 appenders, the same message (with the same messageIdx) will be logged twice.
-                        JLTestUtils.checkMessages(scenarios[s].nbrOfMessagesExpected, callsToSend, scenarios[s].nbrAppenders);
+                        JLTestUtils.checkMessages(s.toString(), scenarios[s].nbrOfMessagesExpected, callsToSend, scenarios[s].nbrAppenders);
                     });
             }); // it
         } // for
@@ -92,7 +92,7 @@ describe("maxMessages", function () {
                         JLTestUtils.logMessages(logger, JL.getWarnLevel(), bufferScenarios[s].nbrNormalMessages, messageIdxRef);
                         JLTestUtils.logMessages(logger, JL.getFatalLevel(), bufferScenarios[s].nbrFatalMessages, messageIdxRef);
 
-                        JLTestUtils.checkMessages(bufferScenarios[s].nbrOfMessagesExpected, callsToSend, 1, bufferScenarios[s].expectedMessageIndexes);
+                        JLTestUtils.checkMessages(s.toString(), bufferScenarios[s].nbrOfMessagesExpected, callsToSend, 1, bufferScenarios[s].expectedMessageIndexes);
                     });
             }); // it
         } // for

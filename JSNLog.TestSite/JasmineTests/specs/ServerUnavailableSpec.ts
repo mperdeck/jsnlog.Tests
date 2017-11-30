@@ -93,7 +93,7 @@ describe("Server Unavailable", function () {
                 JLTestUtils.logMessages(logger, JL.getInfoLevel(), scenarios[s].nbrMessagesDuringOutage, messageIdxRef);
 
                 // Make sure that send has been called second time
-                JLTestUtils.checkMessages(scenarios[s].expected1.length, callsToSend, 1, scenarios[s].expected1);
+                JLTestUtils.checkMessages(s.toString(), scenarios[s].expected1.length, callsToSend, 1, scenarios[s].expected1);
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
 
                 if (scenarios[s].haveSecondOutagePeriod) {
@@ -108,7 +108,7 @@ describe("Server Unavailable", function () {
                 jasmine.clock().tick(10001);
 
                 // It should have resend the message
-                JLTestUtils.checkMessages(scenarios[s].expected2.length, callsToSend, 1, scenarios[s].expected2);
+                JLTestUtils.checkMessages(s.toString(), scenarios[s].expected2.length, callsToSend, 1, scenarios[s].expected2);
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
 
                 if (scenarios[s].extraExpectedMessageAfterOutageContains) {
@@ -120,16 +120,16 @@ describe("Server Unavailable", function () {
                 // It should have stopped resending the message.
                 // Wait another period and make sure it didn't send anything else
                 jasmine.clock().tick(10001);
-                JLTestUtils.checkMessages(scenarios[s].expected2.length, callsToSend, 1, scenarios[s].expected2);
+                JLTestUtils.checkMessages(s.toString(), scenarios[s].expected2.length, callsToSend, 1, scenarios[s].expected2);
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
 
                 // It should now be sending messages normally again, without resending
                 JLTestUtils.logMessages(logger, JL.getInfoLevel(), 1, messageIdxRef);
-                JLTestUtils.checkMessages(scenarios[s].expected3.length, callsToSend, 1, scenarios[s].expected3);
+                JLTestUtils.checkMessages(s.toString(), scenarios[s].expected3.length, callsToSend, 1, scenarios[s].expected3);
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
 
                 jasmine.clock().tick(10001);
-                JLTestUtils.checkMessages(scenarios[s].expected3.length, callsToSend, 1, scenarios[s].expected3);
+                JLTestUtils.checkMessages(s.toString(), scenarios[s].expected3.length, callsToSend, 1, scenarios[s].expected3);
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
             });
         });
