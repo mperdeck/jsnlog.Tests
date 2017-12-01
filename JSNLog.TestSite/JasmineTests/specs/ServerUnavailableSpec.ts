@@ -135,19 +135,112 @@ describe("Server Unavailable", function () {
         });
     }
 
+    it("should abort the request in flight after a send timeout", function () {
+        JLTestUtils.runTest(function (logger, appender, xhr, callsToSend) {
+
+            initTest(appender);
+
+            // Internet is accessible
+            let messageIdxRef = { messageIdx: 0 };
+            JLTestUtils.logMessages(logger, JL.getInfoLevel(), 3, messageIdxRef);
+
+            // Next request will see no response.
+            xhr.readyState = 3;
+            xhr.status = 0;
+
+            // 2 log messages generated. Note that jsnlog.js will try to send the first one right away
+            // and fail to do so.
+            JLTestUtils.logMessages(logger, JL.getInfoLevel(), 2, messageIdxRef);
+
+            // Next time request is sent, that will be successful
+            xhr.readyState = 4;
+            xhr.status = 200;
+
+            jasmine.clock().tick(10001);
+
+            // After timeout, the 2 messages should be sent in one batch
+
+            // First 3 messages without problem, then one that failed, than that one and the next log message in one batch
+            JLTestUtils.checkMessages("0", 5, callsToSend, 1, [[0], [1], [2], [3], [3, 4]]);
+            expect(xhr.abort).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    var scenariosOverlap = [
+        {
+            // sendTimeout > batchTimeout
+            // Initial message is sent because of batchTimer expiry. 
+            // Batchtimer expires for second message before response received for first message.
+            id: 0, sendTimeout: 8000, batchTimeout: 1000, 
+            nbrSent1: 1, wait1: 1500, nbrSent2: 1, wait2: 1500, goodResponseReceived: true, wait3: 1500, sendsExpected: [[0],[1]]  
+        },
+        {
+            // sendTimeout > batchTimeout
+            // Initial message is sent because of batchTimer expiry. 
+            // Batchtimer expires for second message before send timout for first message.
+            id: 1, sendTimeout: 8000, batchTimeout: 1000,
+            nbrSent1: 1, wait1: 1500, nbrSent2: 1, wait2: 1500, goodResponseReceived: false, wait3: 10000, sendsExpected: [[0], [0,1]]
+        },
+        {
+            // sendTimeout > batchTimeout
+            // Initial message is sent because batch complete. 
+            // Batchtimer expires for second message before response received for first message.
+            id: 2, sendTimeout: 8000, batchTimeout: 1000,
+            nbrSent1: 4, wait1: 10, nbrSent2: 1, wait2: 1500, goodResponseReceived: true, wait3: 1500, sendsExpected: [[0,1,2,3], [4]]
+        },
+        {
+            // sendTimeout < batchTimeout
+            // Initial message is sent because batch complete. 
+            // Batchtimer expires for second message after response received for first message.
+            id: 3, sendTimeout: 2000, batchTimeout: 8000,
+            nbrSent1: 4, wait1: 10, nbrSent2: 1, wait2: 1500, goodResponseReceived: true, wait3: 10000, sendsExpected: [[0, 1, 2, 3], [4]]
+        },
+        {
+            // sendTimeout < batchTimeout
+            // Initial message is sent because batch complete, but suffers send timout and successful retry. 
+            // Batchtimer expires for second message after send timout and retry for first message.
+            id: 4, sendTimeout: 2000, batchTimeout: 8000,
+            nbrSent1: 4, wait1: 10, nbrSent2: 1, wait2: 1500, goodResponseReceived: false, wait3: 10000, sendsExpected: [[0, 1, 2, 3], [0, 1, 2, 3], [4]]
+        }
+    ];
 
 
+    // test each scenario
+    for (let s = 0; s < scenariosOverlap.length; s++) {
+        var title = "sendTimer and batchTimer both running - test " + scenariosOverlap[s].id;
 
+        it(title, function () {
+            JLTestUtils.runTest(function (logger, appender, xhr, callsToSend) {
 
-    // log, outage starts, log bit more, outage ends, log more
+                appender.setOptions({
+                    batchSize: 4,
+                    sendTimeout: scenariosOverlap[s].sendTimeout,
+                    batchTimeout: scenariosOverlap[s].batchTimeout,
+                });
 
-    // log, outage starts, log bit more, maxBatchSize reached, log more, outage ends, log more (expect warn message)
+                // Sends from now on all fail
+                xhr.status = 0;
 
+                let messageIdxRef = { messageIdx: 0 };
+                JLTestUtils.logMessages(logger, JL.getInfoLevel(), scenariosOverlap[s].nbrSent1, messageIdxRef);
+                jasmine.clock().tick(scenariosOverlap[s].wait1);
 
-// check it aborts the call if the sendtimer timed out
+                JLTestUtils.logMessages(logger, JL.getInfoLevel(), scenariosOverlap[s].nbrSent2, messageIdxRef);
+                jasmine.clock().tick(scenariosOverlap[s].wait2);
 
+                // Sends from now on all succeed
+                xhr.status = 200;
 
+                if (scenariosOverlap[s].goodResponseReceived) {
+                    xhr.onreadystatechange();
+                }
 
+                jasmine.clock().tick(scenariosOverlap[s].wait3);
+
+                JLTestUtils.checkMessages(s.toString(), scenariosOverlap[s].sendsExpected.length, callsToSend, 1, scenariosOverlap[s].sendsExpected);
+            });
+        });
+    }
 });
 
 
