@@ -25,17 +25,20 @@
 </jsnlog>
 ",
 new [] {
-    new T(3000, "a", 1),     // da1's batch size is 3, so won't attempt to send yet
+    new T(3000, "a", 1),    // da1's batch size is 3, so won't attempt to send yet
     new T(2000, "c", 2),    // message will be stored in buffer
     new T(3000, "", 1),     // da1's batch size is 3, so won't attempt to send yet
-    new T(4000, "c", 2),    // message will be sent, together with message stored in buffer - count 2 toward maxMessages
-    new T(3000, "b", 3),    // No batching or buffering for da2 or b, so this will be sent and count 1 towards maxMessages right away
-    new T(3000, "a", 1),    // Batch size for da1 is reached, so will send. Note it will send 3 messages in the batch.
+    new T(4000, "c", 2),    // maxMessages reached. This message will be sent, together with message stored 
+                            // in buffer. Messages in the batch buffer of da1 will not yet be sent. 
+    new T(3000, "b", 0),    // This will never be sent, because maxMessages reached.
+    new T(3000, "a", 0),    // This will never be sent, because maxMessages reached. But da1 will notice
+                            // the stranded messages in its batch buffer (stranded because maxMessages reached)
+                            // and send them.
     new T(3000, "", 0),
     new T(3000, "b", 0),
     new T(4000, "c", 0),
     new T(4000, "a", 0),
-    
+
     new T(checkNbr: 1, checkAppender: "da1"),
     new T(checkNbr: 2, checkAppender: "da3"),
     new T(checkNbr: 3, checkAppender: "da2")

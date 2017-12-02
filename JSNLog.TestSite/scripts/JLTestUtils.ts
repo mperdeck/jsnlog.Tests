@@ -5,6 +5,9 @@
 module JLTestUtils {
     export function Check(checkAppenderUrlPath: string, checkNbr: number, expected: JL.LogItem[]) {
 
+        console.log('------------------------------');
+        console.log('Check checkNbr: ' + checkNbr);
+
         var checkAppenderUrl = 'http://dummy.com/' + checkAppenderUrlPath;
 
 		// An appender only calls xhr.send when it tries to send a log request.
@@ -30,8 +33,10 @@ module JLTestUtils {
             resultDiv.append('<tr><td valign="top" colspan=\'2\'>' + comparisonResult + '</td></tr>');
             resultDiv.append('<tr><td valign="top">Expected:</td><td>' + expectedString + '</td></tr>');
             resultDiv.append('<tr><td valign="top">Actual:</td><td>' + actualString + '</td></tr></table>');
+            console.log('FAILED: ' + comparisonResult);
         } else {
             resultDiv = $('<div style="border-top: 3px green solid" >Passed: ' + checkNbr + ' | ' + timeNow + '</div>');
+            console.log('SUCCEEDED');
         }
 
         $('body').append(resultDiv);
@@ -214,8 +219,48 @@ module JLTestUtils {
         return "idx: " + idx + "</br>field: " + fieldName + "</br>expected: " + expected +"</br>actual: "+ actual;
     }
 
+    // If the items are equal, returns ""
+    // If not, returns a string pointing out the diffference
+    function LogItemsEqual(i: number, expected: JL.LogItem, actual: JL.LogItem): string {
+        if (expected.l != actual.l) {
+            return FormatResult(i, "level", expected.l.toString(), actual.l.toString());
+        }
+
+        var m: any = expected.m;
+        var match = false;
+
+        if (m instanceof RegExp) {
+            match = m.test(actual.m);
+        }
+        else {
+            match = (expected.m == actual.m);
+        }
+
+        if (!match) {
+            return FormatResult(i, "msg", expected.m, actual.m);
+        }
+
+        if (expected.n != actual.n) {
+            return FormatResult(i, "logger name", expected.n, actual.n);
+        }
+
+        // Timestamps are precise to the ms.
+        // Allow a small difference between actual and expected, because we record the timestamp
+        // a bit later then when jsnlog produces the log request.
+
+        var allowedDifferenceMs = 30;
+
+        if (Math.abs(expected.t - actual.t) > allowedDifferenceMs) {
+            return FormatResult(i, "timestamp", expected.t.toString(), actual.t.toString());
+        }
+
+        return "";
+    }
+
     // Returns string with comparison result. 
     // Returns empty string if expected and actual are equal.
+    // The two arrays are equal if the items in actual all appear in the expected array.
+    // This does not take order into account.
     function LogItemArraysCompareResult(expected: JL.LogItem[], actual: JL.LogItem[]): string {
         var nbrLogItems = expected.length;
         var i;
@@ -227,40 +272,24 @@ module JLTestUtils {
         }
 
         for (i = 0; i < nbrLogItems; i++) {
-            if (expected[i].l != actual[i].l) {
-                return FormatResult(i, "level", expected[i].l.toString(), actual[i].l.toString());
+            let result: string = null;
+            for (let j = 0; j < nbrLogItems; j++) {
+                result = LogItemsEqual(i, expected[i], actual[j]);
+
+                if (result == "") {
+                    break;
+                }
             }
 
-            var m: any = expected[i].m;
-            var match = false;
-
-            if (m instanceof RegExp)
-            {
-                match = m.test(actual[i].m);
-            }
-            else
-            {
-                match = (expected[i].m == actual[i].m);
+            if (result == "") {
+                continue;
             }
 
-            if (!match)
-            {
-                return FormatResult(i, "msg", expected[i].m, actual[i].m);
-            }
-
-            if (expected[i].n != actual[i].n)
-            {
-                return FormatResult(i, "logger name", expected[i].n, actual[i].n);
-            }
-
-            // Timestamps are precise to the ms.
-			// Allow a small difference between actual and expected, because we record the timestamp
-			// a bit later then when jsnlog produces the log request.
-
-			var allowedDifferenceMs = 10; 
-			
-            if (Math.abs(expected[i].t - actual[i].t) > allowedDifferenceMs) {
-                return FormatResult(i, "timestamp", expected[i].t.toString(), actual[i].t.toString());
+            // No match found
+            if (nbrLogItems == 1) {
+                return result;
+            } else {
+                return "expected message " + i + " not found in array of actual messages";
             }
         }
 

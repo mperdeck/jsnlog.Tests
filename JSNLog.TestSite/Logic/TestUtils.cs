@@ -144,7 +144,8 @@ namespace JSNLog.TestSite.Logic
                     string msg = t.LogObject ?? @"""" + Msg(seq, t.CheckExpected, t.Level, t.Logger) + @"""";
                     string logCallJs = string.Format(@"JL(""{0}"").log({1}, {2});", t.Logger, t.Level, msg);
                     string storeTimestampJs = StoreTimestampJs(seq);
-                    sb.AppendLine(logCallJs + " " + storeTimestampJs);
+                    string consoleLog = $"console.log('log Logger: {t.Logger}, Level: {t.Level}, msg: ' + {msg});";
+                    sb.AppendLine(logCallJs + " " + storeTimestampJs + " " + consoleLog);
                 }
 
                 if (t.CheckNbr > -1)
