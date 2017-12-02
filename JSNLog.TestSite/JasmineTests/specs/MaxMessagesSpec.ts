@@ -1,7 +1,8 @@
 /// <reference path="../../scripts/JLTestUtils.ts"/>
 /// <reference path="../../../../jsnlog.js/jsnlog.ts"/>
 
-describe("maxMessages", function () {
+var describeTitle: string = "maxMessages | ";
+describe(describeTitle, function () {
 
     beforeEach(function () {
         JL.setOptions({ maxMessages: 10 });
@@ -30,15 +31,16 @@ describe("maxMessages", function () {
         ];
 
         // test each scenario
+        var mySpec1: any[];
         for (let s = 0; s < scenarios.length; s++) {
             var title =
-                "Simple case: " +
+                "Simple case - test " + s.toString() + ': ' +
                 scenarios[s].nbrAppenders.toString() + " appenders, " +
                 scenarios[s].nbrLoggers.toString() + " loggers, " +
                 scenarios[s].nbrOfMessagesExpected.toString() + " messages expected to be sent";
 
-            it(title, function () {
-
+            mySpec1[s] = it(title, function () {
+                JLTestUtils.logItTitle(mySpec1[s].getFullName());
                 JLTestUtils.runTestMultiple(
                     scenarios[s].nbrLoggers, scenarios[s].nbrAppenders, function (loggers, appenders, xhr, callsToSend) {
                         let messageIdxRef = { messageIdx: 0 };
@@ -53,7 +55,8 @@ describe("maxMessages", function () {
         } // for
     });
 
-    describe("Used with trace buffer", function () {
+    describeTitle = "Used with trace buffer | ";
+    describe(describeTitle, function () {
         var bufferScenarios = [
             // Log below the limit. 3 messages are expected, because the trace messages and the fatal message go out in 1 batch
             { nbrNormalMessages: 1, nbrTraceMessages: 4, nbrFatalMessages: 2, nbrOfMessagesExpected: 3, expectedMessageIndexes: [[4], [5, 0, 1, 2, 3], [6]] },
@@ -62,6 +65,7 @@ describe("maxMessages", function () {
         ];
 
         // test each scenario
+        var mySpec2: any[];
         for (let s = 0; s < bufferScenarios.length; s++) {
             var title =
                 "Using trace messages buffer: " +
@@ -70,8 +74,8 @@ describe("maxMessages", function () {
                 bufferScenarios[s].nbrFatalMessages.toString() + " fatal messages, " +
                 bufferScenarios[s].nbrOfMessagesExpected.toString() + " messages expected to be sent";
 
-            it(title, function () {
-
+            mySpec2[s] = it(title, function () {
+                JLTestUtils.logItTitle(mySpec2[s].getFullName());
                 JLTestUtils.runTest(
                     function (logger, appender, xhr, callsToSend) {
 

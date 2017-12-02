@@ -6,9 +6,12 @@
 // In your tests (not here), you need to create new loggers and appenders, so the tests do not
 // influence each other.
 
-describe("Simple Logging", function () {
+var describeTitle: string = "Simple Logging | ";
+describe(describeTitle, function () {
 
-    it("should log fatal event", function () {
+    var title: string = "should log fatal event";
+    var mySpec1: any = it(title, function () {
+        JLTestUtils.logItTitle(mySpec1.getFullName());
         JLTestUtils.runTest(function (logger, appender, xhr, callsToSend) {
             logger.fatal("Fatal event");
 
@@ -18,7 +21,9 @@ describe("Simple Logging", function () {
         });
     });
 
-    it("should log multiple fatal events", function () {
+    title = "should log multiple fatal events";
+    var mySpec2: any = it(title, function () {
+        JLTestUtils.logItTitle(mySpec2.getFullName());
         JLTestUtils.runTest(function (logger, appender, xhr, callsToSend) {
             logger.fatal("Fatal event 0");
             logger.fatal("Fatal event 1");

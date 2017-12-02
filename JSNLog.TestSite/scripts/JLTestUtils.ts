@@ -124,8 +124,15 @@ module JLTestUtils {
     }
 
     export function wait(ms: number) {
-        console.log('-- ' + (new Date).getTime() + ' wait - ms: ' + ms);
-        JLTestUtils.wait(ms);
+       console.log('-- ' + (new Date).getTime() + ' wait - ms: ' + ms);
+       jasmine.clock().tick(ms);
+    }
+
+    export function logItTitle(title: string) {
+        console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+        console.log((new Date).getTime() + ' ' + title);
+        console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+        console.log('');
     }
 
     export function logMessages(logger: JL.JSNLogLogger, level: number, nbrMessagesToLog: number, messageIdxRef: { messageIdx: number }): void {
@@ -148,6 +155,8 @@ module JLTestUtils {
     export function checkMessages(scenarioId: string, nbrOfMessagesExpected: number, callsToSend: any,
         messageIdxIncrement: number = 1, expectedMessageIndexes: number[][] = null) {
 
+        var consolelogid: string = '>>>' + (new Date()).getTime().toString() + '<<<';
+
         // Check that the expected nbr of messages sent
         var actualCount: number = callsToSend.count(); 
         // Second parameter to toBe is undocumented, lets you print a message if the check fails.
@@ -167,6 +176,7 @@ module JLTestUtils {
         console.log('------------------------------');
         console.log('checkMessages ' + (new Date).getTime());
         console.log('');
+        console.log('consolelogid: ' + consolelogid);
         console.log('scenarioId: ' + scenarioId);
         console.log('nbrOfMessagesExpected: ' + nbrOfMessagesExpected);
         console.log('actualCount: ' + actualCount);
@@ -184,7 +194,8 @@ module JLTestUtils {
             for (let i = 0; i < expectedMessageIndexes[m].length; i++) {
                 // Second parameter to toContain is undocumented, lets you print a message if the check fails.
                 expect(argValue0).toContain('"m":"Event ' + expectedMessageIndexes[m][i].toString() + '"',
-                    "scenarioNbr: " + scenarioId + ", nbrOfMessagesExpected: " + nbrOfMessagesExpected.toString() +
+                    'consolelogid: ' + consolelogid + 
+                    ", scenarioNbr: " + scenarioId + ", nbrOfMessagesExpected: " + nbrOfMessagesExpected.toString() +
                     ", m: " + m.toString() + ", i: " + i.toString());
             }
         }

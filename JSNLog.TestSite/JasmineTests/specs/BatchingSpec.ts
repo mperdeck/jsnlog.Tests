@@ -1,7 +1,8 @@
 /// <reference path="../../scripts/JLTestUtils.ts"/>
 /// <reference path="../../../../jsnlog.js/jsnlog.ts"/>
 
-describe("Batching", function () {
+var describeTitle: string = "Batching | ";
+describe(describeTitle, function () {
 
     beforeEach(function () {
         jasmine.clock().install();
@@ -40,11 +41,12 @@ describe("Batching", function () {
     ];
 
     // test each scenario
+    var mySpec1: any[];
     for (let s = 0; s < scenarios.length; s++) {
         var title = "Test: " + scenarios[s].id.toString();
 
-        it(title, function () {
-
+        mySpec1[s] = it(title, function () {
+            JLTestUtils.logItTitle(mySpec1[s].getFullName());
             JLTestUtils.runTest(function (logger, appender, xhr, callsToSend) {
 
                     appender.setOptions({

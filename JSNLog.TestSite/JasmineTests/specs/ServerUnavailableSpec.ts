@@ -1,7 +1,8 @@
 /// <reference path="../../scripts/JLTestUtils.ts"/>
 /// <reference path="../../../../jsnlog.js/jsnlog.ts"/>
 
-describe("Server Unavailable | ", function () {
+var describeTitle: string = "Server Unavailable | ";
+describe(describeTitle, function () {
 
     beforeEach(function () {
         jasmine.clock().install();
@@ -72,13 +73,15 @@ describe("Server Unavailable | ", function () {
     ];
 
     // test each scenario
+    var mySpec1: any[];
     for (let s = 0; s < scenarios.length; s++) {
         var title =
             "should buffer messages during outage and resend them after timeout (" +
             scenarios[s].nbrMessagesDuringOutage +
             " messages during outage)";
 
-        it(title, function () {
+        mySpec1[s] = it(title, function () {
+            JLTestUtils.logItTitle(mySpec1[s].getFullName());
             JLTestUtils.runTest(function (logger, appender, xhr, callsToSend) {
 
                 initTest(appender);
@@ -97,7 +100,7 @@ describe("Server Unavailable | ", function () {
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
 
                 if (scenarios[s].haveSecondOutagePeriod) {
-                    jasmine.clock().tick(10001);
+                    JLTestUtils.wait(10001);
                     JLTestUtils.logMessages(logger, JL.getInfoLevel(), scenarios[s].nbrMessagesDuringSecondOutagePeriod, messageIdxRef);
                 }
 
@@ -105,7 +108,7 @@ describe("Server Unavailable | ", function () {
                 xhr.status = 200;
 
                 // Wait until after it will have retried
-                jasmine.clock().tick(10001);
+                JLTestUtils.wait(10001);
 
                 // It should have resend the message
                 JLTestUtils.checkMessages(s.toString(), scenarios[s].expected2.length, callsToSend, 1, scenarios[s].expected2);
@@ -119,7 +122,7 @@ describe("Server Unavailable | ", function () {
 
                 // It should have stopped resending the message.
                 // Wait another period and make sure it didn't send anything else
-                jasmine.clock().tick(10001);
+                JLTestUtils.wait(10001);
                 JLTestUtils.checkMessages(s.toString(), scenarios[s].expected2.length, callsToSend, 1, scenarios[s].expected2);
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
 
@@ -128,14 +131,16 @@ describe("Server Unavailable | ", function () {
                 JLTestUtils.checkMessages(s.toString(), scenarios[s].expected3.length, callsToSend, 1, scenarios[s].expected3);
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
 
-                jasmine.clock().tick(10001);
+                JLTestUtils.wait(10001);
                 JLTestUtils.checkMessages(s.toString(), scenarios[s].expected3.length, callsToSend, 1, scenarios[s].expected3);
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
             });
         });
     }
 
-    it("should abort the request in flight after a send timeout", function () {
+    var title: string = "should abort the request in flight after a send timeout";
+    var mySpec2: any = it(title, function () {
+        JLTestUtils.logItTitle(mySpec2.getFullName());
         JLTestUtils.runTest(function (logger, appender, xhr, callsToSend) {
 
             initTest(appender);
@@ -156,7 +161,7 @@ describe("Server Unavailable | ", function () {
             xhr.readyState = 4;
             xhr.status = 200;
 
-            jasmine.clock().tick(10001);
+            JLTestUtils.wait(10001);
 
             // After timeout, the 2 messages should be sent in one batch
 
@@ -206,10 +211,12 @@ describe("Server Unavailable | ", function () {
 
 
     // test each scenario
+    var mySpec3: any[];
     for (let s = 0; s < scenariosOverlap.length; s++) {
         var title = "sendTimer and batchTimer both running - test " + scenariosOverlap[s].id;
 
-        it(title, function () {
+        mySpec3[s] = it(title, function () {
+            JLTestUtils.logItTitle(mySpec3[s].getFullName());
             JLTestUtils.runTest(function (logger, appender, xhr, callsToSend) {
 
                 appender.setOptions({
@@ -223,10 +230,10 @@ describe("Server Unavailable | ", function () {
 
                 let messageIdxRef = { messageIdx: 0 };
                 JLTestUtils.logMessages(logger, JL.getInfoLevel(), scenariosOverlap[s].nbrSent1, messageIdxRef);
-                jasmine.clock().tick(scenariosOverlap[s].wait1);
+                JLTestUtils.wait(scenariosOverlap[s].wait1);
 
                 JLTestUtils.logMessages(logger, JL.getInfoLevel(), scenariosOverlap[s].nbrSent2, messageIdxRef);
-                jasmine.clock().tick(scenariosOverlap[s].wait2);
+                JLTestUtils.wait(scenariosOverlap[s].wait2);
 
                 // Sends from now on all succeed
                 xhr.status = 200;
@@ -235,7 +242,7 @@ describe("Server Unavailable | ", function () {
                     xhr.onreadystatechange();
                 }
 
-                jasmine.clock().tick(scenariosOverlap[s].wait3);
+                JLTestUtils.wait(scenariosOverlap[s].wait3);
 
                 JLTestUtils.checkMessages(s.toString(), scenariosOverlap[s].sendsExpected.length, callsToSend, 1, scenariosOverlap[s].sendsExpected);
             });
