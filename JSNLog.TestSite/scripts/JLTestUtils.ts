@@ -59,6 +59,8 @@ module JLTestUtils {
             var item = JSON.parse(json);
             (<any>window)[this._url] = (<any>window)[this._url].concat(item.lg);
 
+            console.log('-- ' + (new Date).getTime() + ' send - json: ' + json);
+
             this.onreadystatechange();
         }
     };
@@ -121,9 +123,19 @@ module JLTestUtils {
         });
     }
 
+    export function wait(ms: number) {
+        console.log('-- ' + (new Date).getTime() + ' wait - ms: ' + ms);
+        jasmine.clock().tick(ms);
+    }
+
     export function logMessages(logger: JL.JSNLogLogger, level: number, nbrMessagesToLog: number, messageIdxRef: { messageIdx: number }): void {
         for (let m = 0; m < nbrMessagesToLog; m++) {
-            logger.log(level, "Event " + messageIdxRef.messageIdx.toString());
+
+            let message: string = "Event " + messageIdxRef.messageIdx.toString(); 
+
+            console.log('-- ' + (new Date).getTime() + ' logMessages  - idx: ' + messageIdxRef.messageIdx +', level: ' + level + ', message: ' + message);
+
+            logger.log(level, message);
             messageIdxRef.messageIdx++;
         }
     }
@@ -152,10 +164,22 @@ module JLTestUtils {
             }
         }
 
+        console.log('------------------------------');
+        console.log('checkMessages ' + (new Date).getTime();
+        console.log('');
+        console.log('scenarioId: ' + scenarioId);
+        console.log('nbrOfMessagesExpected: ' + nbrOfMessagesExpected);
+        console.log('actualCount: ' + actualCount);
+        console.log('messageIdxIncrement: ' + messageIdxIncrement);
+        console.log('expectedMessageIndexes: ');
+        console.dir(expectedMessageIndexes);
+
         // For each message sent, check its content
         for (let m = 0; m < nbrOfMessagesExpected; m++) {
             var args = callsToSend.argsFor(m);
             var argValue0 = args[0];
+
+            console.log('Actual message ' + m + ': ' + argValue0);
 
             for (let i = 0; i < expectedMessageIndexes[m].length; i++) {
                 // Second parameter to toContain is undocumented, lets you print a message if the check fails.

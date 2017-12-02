@@ -1,7 +1,7 @@
 /// <reference path="../../scripts/JLTestUtils.ts"/>
 /// <reference path="../../../../jsnlog.js/jsnlog.ts"/>
 
-describe("Server Unavailable", function () {
+describe("Server Unavailable | ", function () {
 
     beforeEach(function () {
         jasmine.clock().install();
