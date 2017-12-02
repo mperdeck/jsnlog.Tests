@@ -125,7 +125,7 @@ module JLTestUtils {
 
     export function wait(ms: number) {
         console.log('-- ' + (new Date).getTime() + ' wait - ms: ' + ms);
-        jasmine.clock().tick(ms);
+        JLTestUtils.wait(ms);
     }
 
     export function logMessages(logger: JL.JSNLogLogger, level: number, nbrMessagesToLog: number, messageIdxRef: { messageIdx: number }): void {
@@ -165,7 +165,7 @@ module JLTestUtils {
         }
 
         console.log('------------------------------');
-        console.log('checkMessages ' + (new Date).getTime();
+        console.log('checkMessages ' + (new Date).getTime());
         console.log('');
         console.log('scenarioId: ' + scenarioId);
         console.log('nbrOfMessagesExpected: ' + nbrOfMessagesExpected);

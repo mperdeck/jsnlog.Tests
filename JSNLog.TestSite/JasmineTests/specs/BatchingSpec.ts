@@ -60,7 +60,7 @@ describe("Batching", function () {
                     for (let t = 0; t < scenarios[s].test.length; t++) {
                         JLTestUtils.logMessages(logger, JL.getDebugLevel(), scenarios[s].test[t].nbrTrace, messageIdxRef);
                         JLTestUtils.logMessages(logger, JL.getFatalLevel(), scenarios[s].test[t].nbrFatal, messageIdxRef);
-                        jasmine.clock().tick(scenarios[s].test[t].waitMs);
+                        JLTestUtils.wait(scenarios[s].test[t].waitMs);
 
                         JLTestUtils.checkMessages(s.toString() + "." + t.toString(), scenarios[s].test[t].expected.length, callsToSend, 1, scenarios[s].test[t].expected);
                     }
