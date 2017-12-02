@@ -84,7 +84,7 @@ module JLTestUtils {
     export var nowMs = 0;
 
     export function getTime() {
-        return nowMs;
+        return JLTestUtils.nowMs;
     }
 
     export function wait(ms: number) {

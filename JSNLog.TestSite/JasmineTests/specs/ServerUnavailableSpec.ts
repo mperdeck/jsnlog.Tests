@@ -204,9 +204,10 @@ describe(describeTitle, function () {
         {
             // sendTimeout < batchTimeout
             // Initial message is sent because batch complete, but suffers send timout and successful retry. 
-            // Batchtimer expires for second message after send timout and retry for first message.
+            // Batchtimer set to expire for second message after send timout and retry for first message.
+            // When send timer expires, the retry of the first message will send the entire buffer.
             id: 4, sendTimeout: 2000, batchTimeout: 8000,
-            nbrSent1: 4, wait1: 10, nbrSent2: 1, wait2: 1500, goodResponseReceived: false, wait3: 10000, sendsExpected: [[0, 1, 2, 3], [0, 1, 2, 3], [4]]
+            nbrSent1: 4, wait1: 10, nbrSent2: 1, wait2: 1500, goodResponseReceived: false, wait3: 10000, sendsExpected: [[0, 1, 2, 3], [0, 1, 2, 3, 4]]
         }
     ];
 
@@ -238,6 +239,7 @@ describe(describeTitle, function () {
 
                 // Sends from now on all succeed
                 xhr.status = 200;
+                xhr.readyState = 4;
 
                 if (scenariosOverlap[s].goodResponseReceived) {
                     xhr.onreadystatechange();
