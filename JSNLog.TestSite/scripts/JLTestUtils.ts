@@ -59,7 +59,7 @@ module JLTestUtils {
             var item = JSON.parse(json);
             (<any>window)[this._url] = (<any>window)[this._url].concat(item.lg);
 
-            console.log('-- ' + (new Date).getTime() + ' send - json: ' + json);
+            console.log('-- ' + JLTestUtils.getTime() + ' send - json: ' + json);
 
             this.onreadystatechange();
         }
@@ -81,6 +81,18 @@ module JLTestUtils {
         return testNbrString;
     }
 
+    export var nowMs = 0;
+
+    export function getTime() {
+        return nowMs;
+    }
+
+    export function wait(ms: number) {
+        console.log('-- ' + JLTestUtils.getTime() + ' wait - ms: ' + ms);
+        JLTestUtils.nowMs += ms;  // updates the time used inside jsnlog.js
+        jasmine.clock().tick(ms); // fires setTimer, etc. if needed
+    }
+
     export function runTestMultiple(
         nbrLoggers: number, nbrAppenders: number,
         test: (
@@ -97,6 +109,7 @@ module JLTestUtils {
         // This must be done before creating any appenders, because the appenders will use _createXMLHttpRequest
         // to create the xhr object.
         JL._createXMLHttpRequest = JLTestUtils.createXMLHttpRequestMock;
+        JL._getTime = JLTestUtils.getTime;
 
         // ------------
 
@@ -123,14 +136,9 @@ module JLTestUtils {
         });
     }
 
-    export function wait(ms: number) {
-       console.log('-- ' + (new Date).getTime() + ' wait - ms: ' + ms);
-       jasmine.clock().tick(ms);
-    }
-
     export function logItTitle(title: string) {
         console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-        console.log((new Date).getTime() + ' ' + title);
+        console.log(JLTestUtils.getTime() + ' ' + title);
         console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
         console.log('');
     }
@@ -140,7 +148,7 @@ module JLTestUtils {
 
             let message: string = "Event " + messageIdxRef.messageIdx.toString(); 
 
-            console.log('-- ' + (new Date).getTime() + ' logMessages  - idx: ' + messageIdxRef.messageIdx +', level: ' + level + ', message: ' + message);
+            console.log('-- ' + JLTestUtils.getTime() + ' logMessages  - idx: ' + messageIdxRef.messageIdx +', level: ' + level + ', message: ' + message);
 
             logger.log(level, message);
             messageIdxRef.messageIdx++;
@@ -159,9 +167,6 @@ module JLTestUtils {
 
         // Check that the expected nbr of messages sent
         var actualCount: number = callsToSend.count(); 
-        // Second parameter to toBe is undocumented, lets you print a message if the check fails.
-        // Doesn't work for toEqual.
-        expect(actualCount).toBe(nbrOfMessagesExpected, "scenarioId: " + scenarioId);
 
         // Build list of expected messageIdxs if not given
         if (!expectedMessageIndexes) {
@@ -174,7 +179,7 @@ module JLTestUtils {
         }
 
         console.log('------------------------------');
-        console.log('checkMessages ' + (new Date).getTime());
+        console.log('checkMessages ' + JLTestUtils.getTime());
         console.log('');
         console.log('consolelogid: ' + consolelogid);
         console.log('scenarioId: ' + scenarioId);
@@ -183,6 +188,10 @@ module JLTestUtils {
         console.log('messageIdxIncrement: ' + messageIdxIncrement);
         console.log('expectedMessageIndexes: ');
         console.dir(expectedMessageIndexes);
+
+        // Second parameter to toBe is undocumented, lets you print a message if the check fails.
+        // Doesn't work for toEqual.
+        expect(actualCount).toBe(nbrOfMessagesExpected, "scenarioId: " + scenarioId + ', consolelogid: ' + consolelogid);
 
         // For each message sent, check its content
         for (let m = 0; m < nbrOfMessagesExpected; m++) {

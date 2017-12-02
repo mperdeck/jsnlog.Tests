@@ -73,15 +73,15 @@ describe(describeTitle, function () {
     ];
 
     // test each scenario
-    var mySpec1: any[];
     for (let s = 0; s < scenarios.length; s++) {
+        (function (s: number) {
         var title =
             "should buffer messages during outage and resend them after timeout (" +
             scenarios[s].nbrMessagesDuringOutage +
             " messages during outage)";
 
-        mySpec1[s] = it(title, function () {
-            JLTestUtils.logItTitle(mySpec1[s].getFullName());
+        var mySpec:any = it(title, function () {
+            JLTestUtils.logItTitle(mySpec.getFullName());
             JLTestUtils.runTest(function (logger, appender, xhr, callsToSend) {
 
                 initTest(appender);
@@ -134,9 +134,10 @@ describe(describeTitle, function () {
                 JLTestUtils.wait(10001);
                 JLTestUtils.checkMessages(s.toString(), scenarios[s].expected3.length, callsToSend, 1, scenarios[s].expected3);
                 expect(xhr.abort).toHaveBeenCalledTimes(0);
-            });
-        });
-    }
+            }); // runtest
+        }); // it
+        })(s);
+    } // for
 
     var title: string = "should abort the request in flight after a send timeout";
     var mySpec2: any = it(title, function () {
@@ -211,12 +212,12 @@ describe(describeTitle, function () {
 
 
     // test each scenario
-    var mySpec3: any[];
     for (let s = 0; s < scenariosOverlap.length; s++) {
+        (function (s: number) {
         var title = "sendTimer and batchTimer both running - test " + scenariosOverlap[s].id;
 
-        mySpec3[s] = it(title, function () {
-            JLTestUtils.logItTitle(mySpec3[s].getFullName());
+        var mySpec:any = it(title, function () {
+            JLTestUtils.logItTitle(mySpec.getFullName());
             JLTestUtils.runTest(function (logger, appender, xhr, callsToSend) {
 
                 appender.setOptions({
@@ -245,9 +246,10 @@ describe(describeTitle, function () {
                 JLTestUtils.wait(scenariosOverlap[s].wait3);
 
                 JLTestUtils.checkMessages(s.toString(), scenariosOverlap[s].sendsExpected.length, callsToSend, 1, scenariosOverlap[s].sendsExpected);
-            });
-        });
-    }
+            }); // runtest
+        }); // it
+        })(s);
+    } // for
 });
 
 

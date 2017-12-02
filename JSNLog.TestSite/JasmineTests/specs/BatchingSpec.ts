@@ -41,12 +41,12 @@ describe(describeTitle, function () {
     ];
 
     // test each scenario
-    var mySpec1: any[];
     for (let s = 0; s < scenarios.length; s++) {
+        (function (s: number) {
         var title = "Test: " + scenarios[s].id.toString();
 
-        mySpec1[s] = it(title, function () {
-            JLTestUtils.logItTitle(mySpec1[s].getFullName());
+        var mySpec:any = it(title, function () {
+            JLTestUtils.logItTitle(mySpec.getFullName());
             JLTestUtils.runTest(function (logger, appender, xhr, callsToSend) {
 
                     appender.setOptions({
@@ -68,6 +68,7 @@ describe(describeTitle, function () {
                     }
             }); //runtest
         }); // it
+        })(s);
     } // for
 });
 

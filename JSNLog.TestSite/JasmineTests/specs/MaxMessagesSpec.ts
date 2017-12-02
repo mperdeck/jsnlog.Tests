@@ -31,27 +31,28 @@ describe(describeTitle, function () {
         ];
 
         // test each scenario
-        var mySpec1: any[];
         for (let s = 0; s < scenarios.length; s++) {
-            var title =
-                "Simple case - test " + s.toString() + ': ' +
-                scenarios[s].nbrAppenders.toString() + " appenders, " +
-                scenarios[s].nbrLoggers.toString() + " loggers, " +
-                scenarios[s].nbrOfMessagesExpected.toString() + " messages expected to be sent";
+            (function (s: number) {
+                var title =
+                    "Simple case - test " + s.toString() + ': ' +
+                    scenarios[s].nbrAppenders.toString() + " appenders, " +
+                    scenarios[s].nbrLoggers.toString() + " loggers, " +
+                    scenarios[s].nbrOfMessagesExpected.toString() + " messages expected to be sent";
 
-            mySpec1[s] = it(title, function () {
-                JLTestUtils.logItTitle(mySpec1[s].getFullName());
-                JLTestUtils.runTestMultiple(
-                    scenarios[s].nbrLoggers, scenarios[s].nbrAppenders, function (loggers, appenders, xhr, callsToSend) {
-                        let messageIdxRef = { messageIdx: 0 };
-                        for (let lg = 0; lg < scenarios[s].nbrLoggers; lg++) {
-                            JLTestUtils.logMessages(loggers[lg], JL.getFatalLevel(), scenarios[s].nbrMessagesEachLogger, messageIdxRef);
-                        }
+                var mySpec: any = it(title, function () {
+                    JLTestUtils.logItTitle(mySpec.getFullName());
+                    JLTestUtils.runTestMultiple(
+                        scenarios[s].nbrLoggers, scenarios[s].nbrAppenders, function (loggers, appenders, xhr, callsToSend) {
+                            let messageIdxRef = { messageIdx: 0 };
+                            for (let lg = 0; lg < scenarios[s].nbrLoggers; lg++) {
+                                JLTestUtils.logMessages(loggers[lg], JL.getFatalLevel(), scenarios[s].nbrMessagesEachLogger, messageIdxRef);
+                            }
 
-                        // When there are 2 appenders, the same message (with the same messageIdx) will be logged twice.
-                        JLTestUtils.checkMessages(s.toString(), scenarios[s].nbrOfMessagesExpected, callsToSend, scenarios[s].nbrAppenders);
-                    });
-            }); // it
+                            // When there are 2 appenders, the same message (with the same messageIdx) will be logged twice.
+                            JLTestUtils.checkMessages(s.toString(), scenarios[s].nbrOfMessagesExpected, callsToSend, scenarios[s].nbrAppenders);
+                        });
+                }); // it
+            })(s);
         } // for
     });
 
@@ -65,8 +66,8 @@ describe(describeTitle, function () {
         ];
 
         // test each scenario
-        var mySpec2: any[];
         for (let s = 0; s < bufferScenarios.length; s++) {
+            (function (s: number) {
             var title =
                 "Using trace messages buffer: " +
                 bufferScenarios[s].nbrNormalMessages.toString() + " normal messages, " +
@@ -74,8 +75,8 @@ describe(describeTitle, function () {
                 bufferScenarios[s].nbrFatalMessages.toString() + " fatal messages, " +
                 bufferScenarios[s].nbrOfMessagesExpected.toString() + " messages expected to be sent";
 
-            mySpec2[s] = it(title, function () {
-                JLTestUtils.logItTitle(mySpec2[s].getFullName());
+            var mySpec:any = it(title, function () {
+                JLTestUtils.logItTitle(mySpec.getFullName());
                 JLTestUtils.runTest(
                     function (logger, appender, xhr, callsToSend) {
 
@@ -99,6 +100,7 @@ describe(describeTitle, function () {
                         JLTestUtils.checkMessages(s.toString(), bufferScenarios[s].nbrOfMessagesExpected, callsToSend, 1, bufferScenarios[s].expectedMessageIndexes);
                     });
             }); // it
+            })(s);
         } // for
     });
 });
