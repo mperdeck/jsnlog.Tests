@@ -681,11 +681,11 @@ new JsnlogConfiguration {
         {
             TestDemo(
                 @"
-<jsnlog productionLibraryPath=""" + _newCodeStart + @"https://cdnjs.cloudflare.com/ajax/libs/jsnlog/2.12.1/jsnlog.min.js" + _newCodeEnd + @""">
+<jsnlog productionLibraryPath=""" + _newCodeStart + TestConstants.CdnJsDownloadUrl + _newCodeEnd + @""">
 </jsnlog>",
                 @"
 new JsnlogConfiguration {
-    productionLibraryPath=""" + _newCodeStart + @"https://cdnjs.cloudflare.com/ajax/libs/jsnlog/2.12.1/jsnlog.min.js" + _newCodeEnd + @"""
+    productionLibraryPath=""" + _newCodeStart + TestConstants.CdnJsDownloadUrl + _newCodeEnd + @"""
 }",
                 "loadingjsfile1");
         }
