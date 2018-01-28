@@ -1,7 +1,7 @@
 ﻿// Generated.cs gets copied from Generated.cs.template
 // During the copy, __Version__ is replaced by the actual version.
 
-namespace WebSite.App_Code
+namespace JSNLog.Tests
 {
     public static class Generated
     {
