@@ -131,6 +131,7 @@
     <Content Include="Html\exceptiontests.html" />
     <Content Include="Html\requirejstest.html" />
     <TypeScriptCompile Include="JasmineTests\specs\BatchingSpec.ts" />
+    <TypeScriptCompile Include="JasmineTests\specs\AppenderNameConstraintsSpec.ts" />
     <TypeScriptCompile Include="JasmineTests\specs\ServerUnavailableSpec.ts" />
     <TypeScriptCompile Include="JasmineTests\specs\MaxMessagesSpec.ts" />
     <Content Include="scripts\libs\jasmine-2.8.0\boot.js" />

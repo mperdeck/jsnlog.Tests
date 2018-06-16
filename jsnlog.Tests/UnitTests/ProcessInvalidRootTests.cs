@@ -112,6 +112,22 @@ namespace JSNLog.Tests.UnitTests
         }
 
         [Fact]
+        public void DuplicateAppenderName()
+        {
+            // Arrange
+
+            string configXml = @"
+                <jsnlog>
+    <ajaxAppender name=""da1"" level=""2300"" />
+    <ajaxAppender name=""da1"" level=""2300"" />
+</jsnlog>
+";
+
+            // Act and Assert
+            Exception ex = Assert.Throws<ConfigurationException>(() => RunTest(configXml));
+        }
+
+        [Fact]
         public void InvalidBatchSize()
         {
             // Arrange
