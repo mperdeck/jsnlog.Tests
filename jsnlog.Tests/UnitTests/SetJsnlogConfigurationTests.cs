@@ -109,6 +109,7 @@ namespace JSNLog.Tests.UnitTests
         private void RunTest(JsnlogConfiguration jsnlogConfiguration)
         {
             JavascriptLogging.SetJsnlogConfiguration(() => null, jsnlogConfiguration);
+            JsnlogConfiguration retrievedJsnlogConfiguration = JavascriptLogging.GetJsnlogConfiguration();
         }
     }
 }
