@@ -41,7 +41,7 @@ describe(describeTitle, function () {
         // (in a separate message) the WARN about losing messages.
         {
             nbrMessagesDuringOutage: 6, expected1: [[0], [1]], expected2: [[0], [1], [1, 2, 3, 4], []], expected3: [[0], [1], [1, 2, 3, 4], [], [7]],
-            extraExpectedMessageAfterOutageContains: "Lost 2 messages while connection with the server was down",
+            extraExpectedMessageAfterOutageContains: "Lost 2 messages. Either connection with the server was down or logging was disabled via the enabled option. Reduce lost messages by increasing the ajaxAppender option maxBatchSize.",
             extraExpectedMessageAfterOutageIdx: 3,
             haveSecondOutagePeriod: false,
             nbrMessagesDuringSecondOutagePeriod: 0
@@ -65,7 +65,7 @@ describe(describeTitle, function () {
         {
             // 2 outage periods, 3 messages during second outage period, maxBatchSize exceeded 
             nbrMessagesDuringOutage: 2, expected1: [[0], [1]], expected2: [[0], [1], [1, 2], [1, 2, 3, 4], []], expected3: [[0], [1], [1, 2], [1, 2, 3, 4], [], [6]],
-            extraExpectedMessageAfterOutageContains: "Lost 1 messages while connection with the server was down",
+            extraExpectedMessageAfterOutageContains: "Lost 1 messages. Either connection with the server was down or logging was disabled via the enabled option. Reduce lost messages by increasing the ajaxAppender option maxBatchSize.",
             extraExpectedMessageAfterOutageIdx: 4,
             haveSecondOutagePeriod: true,
             nbrMessagesDuringSecondOutagePeriod: 3
