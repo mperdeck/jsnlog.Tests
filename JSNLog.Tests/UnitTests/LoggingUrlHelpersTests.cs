@@ -65,7 +65,7 @@ namespace JSNLog.Tests.UnitTests
         {
             string configXml = @"
                 <jsnlog>
-<ajaxAppender url=""/jsn2logger"" />
+<ajaxAppender name=""a1"" url=""/jsn2logger"" />
 
 </jsnlog>
 ";
@@ -86,7 +86,7 @@ namespace JSNLog.Tests.UnitTests
         {
             string configXml = @"
                 <jsnlog>
-<ajaxAppender url=""~/jsn2logger"" />
+<ajaxAppender name=""a1"" url=""~/jsn2logger"" />
 
 </jsnlog>
 ";
@@ -107,7 +107,7 @@ namespace JSNLog.Tests.UnitTests
         {
             string configXml = @"
                 <jsnlog defaultAjaxUrl=""/jsnlogger"">
-    <ajaxAppender url=""/jsn2logger"" />
+    <ajaxAppender name=""a1"" url=""/jsn2logger"" />
 </jsnlog>
 ";
 
@@ -128,8 +128,8 @@ namespace JSNLog.Tests.UnitTests
         {
             string configXml = @"
                 <jsnlog defaultAjaxUrl=""/jsnlogger"">
-    <ajaxAppender url=""/jsn2logger"" />
-    <ajaxAppender url=""/jsn3logger"" />
+    <ajaxAppender name=""a1"" url=""/jsn2logger"" />
+    <ajaxAppender name=""a2"" url =""/jsn3logger"" />
 </jsnlog>
 ";
 

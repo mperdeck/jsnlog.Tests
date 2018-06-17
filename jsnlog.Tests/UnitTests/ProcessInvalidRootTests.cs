@@ -108,7 +108,7 @@ namespace JSNLog.Tests.UnitTests
 ";
 
             // Act and Assert
-            Exception ex = Assert.Throws<ConfigurationException>(() => RunTest(configXml));
+            Exception ex = Assert.Throws<GeneralAppenderException>(() => RunTest(configXml));
         }
 
         [Fact]
