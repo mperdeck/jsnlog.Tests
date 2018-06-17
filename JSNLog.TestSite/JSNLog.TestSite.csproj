@@ -140,7 +140,6 @@
     <Content Include="scripts\libs\jasmine-2.8.0\jasmine.css" />
     <Content Include="scripts\libs\jasmine-2.8.0\jasmine.js" />
     <Content Include="scripts\libs\jasmine-2.8.0\jasmine_favicon.png" />
-    <Content Include="JasmineTests\SpecRunner.html" />
     <TypeScriptCompile Include="JasmineTests\specs\SimpleLoggingSpec.ts" />
     <Content Include="JasmineTests\SpecHelper.js" />
     <Content Include="scripts\ai.0.22.19-build00125.js" />
@@ -155,10 +154,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\JasmineTestsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="HtmlHelpers.cs" />
     <Compile Include="Logic\T.cs" />
     <Compile Include="Logic\TestUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -181,6 +182,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="JasmineTests\MIT.LICENSE" />
+    <Content Include="Views\JasmineTests\SpecRunner.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

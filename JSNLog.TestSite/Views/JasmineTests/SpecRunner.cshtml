@@ -1,9 +1,10 @@
-﻿<!--
+﻿@using JSNLog.TestSite
+
+<!--
 The test code in JSTestUtils writes a lot of stuff to the console.
 To save the console to file, right click inside the console and Save As.
 Any "consolelogid" numbers are shown in both the error message in the Jasmine screen and in the console log for easier correlation
 -->
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,17 +16,17 @@ Any "consolelogid" numbers are shown in both the error message in the Jasmine sc
     <script src="../scripts/libs/jasmine-2.8.0/jasmine-html.js"></script>
     <script src="../scripts/libs/jasmine-2.8.0/boot.js"></script>
     <!-- include source files here... -->
-    <script src="../scripts/libs/jsnlog.js"></script>
-    <!-- include spec files here... -->
-    <script src="../scripts/JLTestUtils.js"></script>
-    <script src="SpecHelper.js"></script>
-    <script src="specs/SimpleLoggingSpec.js"></script>
-    <script src="specs/MaxMessagesSpec.js"></script>
-    <script src="specs/ServerUnavailableSpec.js"></script>
-    <script src="specs/BatchingSpec.js"></script>
-    <script src="specs/AppenderNameConstraintsSpec.js"></script>
-</head>
+    @Html.ScriptTag("../scripts/libs/jsnlog.js")
 
+    <!-- include spec files here... -->
+    @Html.ScriptTag("../scripts/JLTestUtils.js")
+    @Html.ScriptTag("SpecHelper.js")
+    @Html.ScriptTag("specs/SimpleLoggingSpec.js")
+    @Html.ScriptTag("specs/MaxMessagesSpec.js")
+    @Html.ScriptTag("specs/ServerUnavailableSpec.js")
+    @Html.ScriptTag("specs/BatchingSpec.js")
+    @Html.ScriptTag("specs/AppenderNameConstraintsSpec.js")
+</head>
 <body>
     <!--Must be on the page to classify test as having been run-->
     <div id="loaded">Page Loaded</div>
@@ -34,3 +35,5 @@ Any "consolelogid" numbers are shown in both the error message in the Jasmine sc
     <div id="testdone"></div>
 </body>
 </html>
+
+

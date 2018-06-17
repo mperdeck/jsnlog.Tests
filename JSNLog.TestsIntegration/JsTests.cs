@@ -29,7 +29,7 @@ namespace JSNLog.Tests.IntegrationTests
         [Fact]
         public void JasmineTests()
         {
-            _context.OpenPage("/JasmineTests/SpecRunner.html");
+            _context.OpenPage("/JasmineTests/SpecRunner");
 
             // Wait a bit to let the JavaScript on the page finish
             Thread.Sleep(1000);
