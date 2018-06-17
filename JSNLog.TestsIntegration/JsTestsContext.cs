@@ -55,7 +55,8 @@ namespace JSNLog.Tests.IntegrationTests
 
         public void OpenPage(string relativeUrl)
         {
-            string absoluteUrl = _webServer.SiteUrl + relativeUrl;
+            string cacheBuster = Guid.NewGuid().ToString();
+            string absoluteUrl = $@"{_webServer.SiteUrl}{relativeUrl}?cachebuster={cacheBuster}";
             Driver.Navigate().GoToUrl(absoluteUrl);
 
             WaitForTestDone();
