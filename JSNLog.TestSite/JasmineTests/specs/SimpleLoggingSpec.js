@@ -1,7 +1,14 @@
 /// <reference path="../../scripts/JLTestUtils.ts"/>
 /// <reference path="../../../../jsnlog.js/jsnlog.ts"/>
-describe("Simple Logging", function () {
-    it("should log fatal event", function () {
+// The default appender gets created right after the JL object is created, inside jsnlog.js.
+// So that will have a normal XmlHttpRequest object.
+// In your tests (not here), you need to create new loggers and appenders, so the tests do not
+// influence each other.
+var describeTitle = "Simple Logging | ";
+describe(describeTitle, function () {
+    var title = "should log fatal event";
+    var mySpec1 = it(title, function () {
+        JLTestUtils.logItTitle(mySpec1.getFullName());
         JLTestUtils.runTest(function (logger, appender, xhr, callsToSend) {
             logger.fatal("Fatal event");
             expect(callsToSend.count()).toEqual(1);
@@ -9,7 +16,9 @@ describe("Simple Logging", function () {
             expect(sentMessage).toContain('"m":"Fatal event"');
         });
     });
-    it("should log multiple fatal events", function () {
+    title = "should log multiple fatal events";
+    var mySpec2 = it(title, function () {
+        JLTestUtils.logItTitle(mySpec2.getFullName());
         JLTestUtils.runTest(function (logger, appender, xhr, callsToSend) {
             logger.fatal("Fatal event 0");
             logger.fatal("Fatal event 1");
