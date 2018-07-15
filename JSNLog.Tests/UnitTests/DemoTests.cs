@@ -10,6 +10,7 @@ using System.Text;
 using JSNLog.Exceptions;
 using System.IO;
 using JSNLog.Tests.Common;
+using System.Web;
 
 namespace JSNLog.Tests.UnitTests
 {
@@ -48,11 +49,11 @@ namespace JSNLog.Tests.UnitTests
         {
             TestDemo(
                 @"
-<jsnlog serverSideMessageFormat=""Sent: % date, Brower: % userAgent - % message"" >
+<jsnlog serverSideMessageFormat=""Sent: %date, Browser: %userAgent - %message"">
 </jsnlog>",
                 @"
 new JsnlogConfiguration {
-    serverSideMessageFormat=""Sent: % date, Brower: % userAgent - % message""
+    serverSideMessageFormat=""Sent: %date, Browser: %userAgent - %message""
 }",
                 "jsnlog1");
         }
@@ -712,8 +713,9 @@ new JsnlogConfiguration {
         private const string _newCodeStart = "(N}";
         private const string _newCodeEnd = "{N)";
 
-        private const string _jsnlogUrl = "/Documentation/Configuration/JSNLog";
+        private const string _jsnlogUrl = "/Documentation/Configuration/OnServer/Jsnlog";
         private const string _setJsnlogConfigurationUrl = "/Documentation/JavascriptLogging/SetJsnlogConfiguration";
+        private const string _setJsnlogCoreConfigurationUrl = "/Documentation/Configuration/OnServer#configcore";
 
         /// <summary>
         /// Ensures that the xml will be serialised by JSNLog to the code in csharp.
@@ -751,9 +753,18 @@ new JsnlogConfiguration {
             sb.AppendLine(@"");
             sb.AppendLine(@"</div><div data-tab=""JsnlogConfiguration"">");
             sb.AppendLine(@"");
-            sb.AppendLine(string.Format(@"<pre>JavascriptLogging.{0}({1});</pre>",
+
+            string html = CodeToHtml(csharp, 2);
+
+            sb.AppendLine(string.Format(@"<pre class='net-framework-only'>JavascriptLogging.{0}({1});</pre>",
                 LinkedText("SetJsnlogConfiguration", _setJsnlogConfigurationUrl),
-                CodeToHtml(csharp, 2)));
+                html));
+
+            sb.AppendLine(string.Format(@"<pre class='net-core-only'>// Use in {0}
+var jsnlogConfiguration = {1};</pre>",
+                LinkedText("Configure method in Startup class", _setJsnlogCoreConfigurationUrl),
+                html));
+
             sb.AppendLine(@"");
             sb.AppendLine(@"</div></div>");
 
@@ -771,9 +782,15 @@ new JsnlogConfiguration {
             return code.Replace(_strikeThroughStart, "").Replace(_newCodeStart, "").Replace(_strikeThroughEnd, "").Replace(_newCodeEnd, "");
         }
 
-        private string LinkedText(string text, string url)
+        private string LinkedText(string text, string url, string onClick = null)
         {
-            return string.Format("<a href='{0}'>{1}</a>", url, text);
+            string onClickHtml = "";
+            if (!string.IsNullOrEmpty(onClick))
+            {
+                onClickHtml = " onclick='" + HttpUtility.JavaScriptStringEncode(onClick) + "'";
+            }
+
+            return string.Format("<a href='{0}'{2}>{1}</a>", url, text, onClickHtml);
         }
 
         private string CodeToHtml(string code, int indent = 0)
@@ -781,7 +798,7 @@ new JsnlogConfiguration {
             return HtmlEncode(("\n" + code.Trim()).Replace("\t", "    ").Replace("\n", "\n" + new string(' ', indent)))
                 .Replace(_strikeThroughStart, "<del>").Replace(_newCodeStart, "<span class='addedcode'>")
                 .Replace(_strikeThroughEnd, "</del>").Replace(_newCodeEnd, "</span>")
-                .Replace("JsnlogConfiguration", LinkedText("JsnlogConfiguration", _jsnlogUrl))
+                .Replace("JsnlogConfiguration", LinkedText("JsnlogConfiguration", _jsnlogUrl, "commonTabs.setJsnlogConfigurationTab()"))
                 .Replace("&lt;jsnlog", "&lt;" + LinkedText("jsnlog", _jsnlogUrl));
         }
 
