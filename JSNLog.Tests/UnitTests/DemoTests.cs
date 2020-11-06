@@ -746,7 +746,7 @@ new JsnlogConfiguration {
 
             var sb = new StringBuilder();
             sb.AppendLine(string.Format("@* GENERATED CODE - by class DemoTests in JSNLog.Tests project. Demo {0}. *@", demoId));
-
+            sb.AppendLine("@using ViewExtensions");
             sb.AppendLine(@"<div class=""commontabs""><div data-tab=""Web.config"">");
             sb.AppendLine(@"");
             sb.AppendLine(string.Format(@"<pre>{0}</pre>", CodeToHtml(configXml)));
@@ -756,14 +756,29 @@ new JsnlogConfiguration {
 
             string html = CodeToHtml(csharp, 2);
 
-            sb.AppendLine(string.Format(@"<pre class='net-framework-only'>JavascriptLogging.{0}({1});</pre>",
-                LinkedText("SetJsnlogConfiguration", _setJsnlogConfigurationUrl),
-                html));
+            sb.AppendLine(@"
+@{ 
+	bool isNetCore;
+	bool isNetFramework;
+	PageVersions.GetPageVersion(out isNetCore, out isNetFramework);
+}
 
-            sb.AppendLine(string.Format(@"<pre class='net-core-only'>// Use in {0}
-var jsnlogConfiguration = {1};</pre>",
-                LinkedText("Configure method in Startup class", _setJsnlogCoreConfigurationUrl),
-                html));
+");
+
+            sb.AppendLine(@"
+	@if (isNetFramework)
+	{
+        <pre class='net-framework-only'>JavascriptLogging."+ LinkedText("SetJsnlogConfiguration", _setJsnlogConfigurationUrl) + "("+ html + @");</pre>
+    }
+");
+
+            sb.AppendLine(@"
+	@if (isNetCore)
+	{
+        <pre class='net-core-only'>// Use in "+ LinkedText("Configure method in Startup class", _setJsnlogCoreConfigurationUrl) + @"
+        var jsnlogConfiguration = "+ html + @";</pre>
+    }
+");
 
             sb.AppendLine(@"");
             sb.AppendLine(@"</div></div>");
