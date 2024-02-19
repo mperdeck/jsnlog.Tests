@@ -1,6 +1,6 @@
+using JSNLog.Tests.Common;
 using System.Collections.Generic;
 using System.Text;
-using JSNLog.Tests.Common;
 
 namespace JSNLog.TestSite.Logic
 {
@@ -87,7 +87,8 @@ namespace JSNLog.TestSite.Logic
             sb.AppendLine(@"
                 <script type=""text/javascript"">
                 var __jsnlog_configure_generated = __jsnlog_configure;
-                __jsnlog_configure = function (JL) {                    JL._createXMLHttpRequest = JLTestUtils.createXMLHttpRequestMock;
+                __jsnlog_configure = function (JL) {
+                    JL._createXMLHttpRequest = JLTestUtils.createXMLHttpRequestMock;
                     if (__jsnlog_configure_generated) { __jsnlog_configure_generated(JL); }
                 };
                 </script>");
@@ -122,7 +123,7 @@ namespace JSNLog.TestSite.Logic
             CommonTestHelpers.SetConfigCache(configXml);
 
             // Generate configuration JavaScript
-            var jsnlogJavaScriptConfig = JSNLog.JavascriptLogging.Configure(); 
+            var jsnlogJavaScriptConfig = JSNLog.JavascriptLogging.Configure("1.2.3.4"); 
             sb.AppendLine(jsnlogJavaScriptConfig);
 
             AddSetXMLHttpRequest(sb);

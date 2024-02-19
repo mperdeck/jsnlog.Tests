@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSNLog.TestsIntegration", "JSNLog.TestsIntegration\JSNLog.TestsIntegration.csproj", "{8A2AB9CF-2057-44A3-B598-01E8F46DECB4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "jsnlog.Tests", "jsnlog.Tests\jsnlog.Tests.csproj", "{79CBE04B-8D70-4563-B8BD-1656F7B88D39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSNLog.TestSite", "JSNLog.TestSite\JSNLog.TestSite.csproj", "{A1E398F0-A83E-47DE-9932-6F0005D45DF4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSNLog.TestsIntegration", "JSNLog.TestsIntegration\JSNLog.TestsIntegration.csproj", "{535327B4-21DE-43E8-9530-E89CE9243C97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "jsnlog.Tests", "jsnlog.Tests\jsnlog.Tests.csproj", "{9B07B5E0-3B3E-41CE-9C72-DF3740B49BFD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSNLog.TestSite", "JSNLog.TestSite\JSNLog.TestSite.csproj", "{9EE2D01B-0533-4153-A9EE-E121A9391BDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,20 +15,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8A2AB9CF-2057-44A3-B598-01E8F46DECB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8A2AB9CF-2057-44A3-B598-01E8F46DECB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8A2AB9CF-2057-44A3-B598-01E8F46DECB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8A2AB9CF-2057-44A3-B598-01E8F46DECB4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A1E398F0-A83E-47DE-9932-6F0005D45DF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A1E398F0-A83E-47DE-9932-6F0005D45DF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A1E398F0-A83E-47DE-9932-6F0005D45DF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A1E398F0-A83E-47DE-9932-6F0005D45DF4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9B07B5E0-3B3E-41CE-9C72-DF3740B49BFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9B07B5E0-3B3E-41CE-9C72-DF3740B49BFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9B07B5E0-3B3E-41CE-9C72-DF3740B49BFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9B07B5E0-3B3E-41CE-9C72-DF3740B49BFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79CBE04B-8D70-4563-B8BD-1656F7B88D39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79CBE04B-8D70-4563-B8BD-1656F7B88D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79CBE04B-8D70-4563-B8BD-1656F7B88D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79CBE04B-8D70-4563-B8BD-1656F7B88D39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{535327B4-21DE-43E8-9530-E89CE9243C97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{535327B4-21DE-43E8-9530-E89CE9243C97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{535327B4-21DE-43E8-9530-E89CE9243C97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{535327B4-21DE-43E8-9530-E89CE9243C97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EE2D01B-0533-4153-A9EE-E121A9391BDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EE2D01B-0533-4153-A9EE-E121A9391BDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EE2D01B-0533-4153-A9EE-E121A9391BDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EE2D01B-0533-4153-A9EE-E121A9391BDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7728A577-0B20-419C-AEE9-F9FBD02BF5C4}
 	EndGlobalSection
 EndGlobal

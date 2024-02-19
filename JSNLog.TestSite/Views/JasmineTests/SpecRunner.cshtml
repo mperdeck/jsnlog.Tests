@@ -20,16 +20,20 @@ Any "consolelogid" numbers are shown in both the error message in the Jasmine sc
     <script src="../scripts/libs/jasmine-2.8.0/jasmine-html.js"></script>
     <script src="../scripts/libs/jasmine-2.8.0/boot.js"></script>
     <!-- include source files here... -->
-    @Html.ScriptTag("../scripts/libs/jsnlog.js")
+    @{
+        string cacheBuster = Context.Request.Query["cachebuster"];
+    }
+
+    @Html.ScriptTag("../scripts/libs/jsnlog.js", cacheBuster)
 
     <!-- include spec files here... -->
-    @Html.ScriptTag("../scripts/JLTestUtils.js")
-    @Html.ScriptTag("SpecHelper.js")
-    @Html.ScriptTag("specs/SimpleLoggingSpec.js")
-    @Html.ScriptTag("specs/MaxMessagesSpec.js")
-    @Html.ScriptTag("specs/ServerUnavailableSpec.js")
-    @Html.ScriptTag("specs/BatchingSpec.js")
-    @Html.ScriptTag("specs/AppenderNameConstraintsSpec.js")
+    @Html.ScriptTag("../scripts/JLTestUtils.js", cacheBuster)
+    @Html.ScriptTag("SpecHelper.js", cacheBuster)
+    @Html.ScriptTag("specs/SimpleLoggingSpec.js", cacheBuster)
+    @Html.ScriptTag("specs/MaxMessagesSpec.js", cacheBuster)
+    @Html.ScriptTag("specs/ServerUnavailableSpec.js", cacheBuster)
+    @Html.ScriptTag("specs/BatchingSpec.js", cacheBuster)
+    @Html.ScriptTag("specs/AppenderNameConstraintsSpec.js", cacheBuster)
 </head>
 <body>
     <!--Must be on the page to classify test as having been run-->

@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JSNLog;
-using System.Web.Mvc;
-using System.Web;
-using JSNLog.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JSNLog.TestSite.Controllers
 {

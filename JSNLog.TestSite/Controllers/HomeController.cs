@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JSNLog;
-using System.Web.Mvc;
-using System.Web;
+using Microsoft.AspNetCore.Mvc;
 using JSNLog.Infrastructure;
 
 namespace JSNLog.TestSite.Controllers
@@ -42,7 +41,7 @@ namespace JSNLog.TestSite.Controllers
 
         public ActionResult RequestIdTest(string id)
         {
-            ViewBag.RequestId = JavascriptLogging.RequestId();
+            ViewBag.RequestId = JavascriptLogging.RequestId(HttpContext);
             ViewBag.PassedInRequestId = id;
 
             return View();

@@ -13,7 +13,6 @@ namespace JSNLog.Tests.Common
             // Set config cache in JavascriptLogging to contents of xe
             XmlElement xe = ConfigToXe(configXml);
             JavascriptLogging.SetJsnlogConfiguration(null, logger);
-            JavascriptLogging.GetJsnlogConfiguration(() => xe);
         }
 
         public static XmlElement ConfigToXe(string configXml)

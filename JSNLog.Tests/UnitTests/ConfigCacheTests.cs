@@ -33,7 +33,7 @@ namespace JSNLog.Tests.UnitTests
 
             // Act
 
-            Exception ex = Assert.Throws<ConflictingConfigException>(() => JavascriptLogging.SetJsnlogConfiguration(() => xe, jsnlogConfiguration));
+            Exception ex = Assert.Throws<ConflictingConfigException>(() => JavascriptLogging.SetJsnlogConfiguration(jsnlogConfiguration));
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace JSNLog.Tests.UnitTests
                 maxMessages = 5
             };
 
-            JavascriptLogging.SetJsnlogConfiguration(() => null, jsnlogConfiguration);
+            JavascriptLogging.SetJsnlogConfiguration(jsnlogConfiguration);
 
             // Act
 
@@ -70,7 +70,6 @@ namespace JSNLog.Tests.UnitTests
 ";
             XmlElement xe = CommonTestHelpers.ConfigToXe(configXml);
             JavascriptLogging.SetJsnlogConfiguration(null);
-            JavascriptLogging.GetJsnlogConfiguration(() => xe);
 
             // Act
 

@@ -83,7 +83,7 @@ namespace JSNLog.Tests.IntegrationTests
             _context.OpenPage("/home/RequestIdTest/6789");
             string requestId3 = RequestIdFieldsConsistent(true);
 
-            Assert.Equal(requestId3, "6789"); // , "JL.RequestId not the same as passed in"
+            Assert.Equal("6789", requestId3); // , "JL.RequestId not the same as passed in"
         }
 
         [Fact]

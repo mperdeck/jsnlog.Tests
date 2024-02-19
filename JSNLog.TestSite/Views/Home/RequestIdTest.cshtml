@@ -1,5 +1,4 @@
 ﻿@using JSNLog
-@using System.Web;
 @using JSNLog.Tests.Common;
 @using System.Text;
 @using JSNLog.TestSite.Logic;
@@ -19,7 +18,7 @@
     @Html.Raw(sb.ToString())
 
     <div id="IdFromController">@ViewBag.RequestId</div>
-    <div id="IdFromView">@HttpContext.Current.RequestId()</div>
+    <div id="IdFromView">@Context.RequestId()</div>
     <div id="IdFromJL"></div>
 
     <script type="text/ecmascript">
