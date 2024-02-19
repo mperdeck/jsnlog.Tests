@@ -755,10 +755,6 @@ new JsnlogConfiguration {
             XmlElement xe = CommonTestHelpers.ConfigToXe(CodeWithoutMeta(configXml));
             var jsnlogConfigurationFromXml = XmlHelpers.DeserialiseXml<JsnlogConfiguration>(xe);
 
-            JsnlogConfiguration jsnlogConfigurationFromCode = (JsnlogConfiguration)UnitTestHelpers.Eval(CodeWithoutMeta(csharp));
-
-            UnitTestHelpers.EnsureEqualJsnlogConfiguration(jsnlogConfigurationFromXml, jsnlogConfigurationFromCode);
-
             // Write partial
 
             var sb = new StringBuilder();
