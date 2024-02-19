@@ -26,61 +26,6 @@ namespace JSNLog.Tests.UnitTests
             return result;
         }
 
-        /// <summary>
-        /// Evalutes the passed in string as C# code.
-        /// Returns the resulting value.
-        /// </summary>
-        /// <param name="sCSCode"></param>
-        /// <returns></returns>
-        public static object Eval(string sCSCode)
-        {
-            CSharpCodeProvider c = new CSharpCodeProvider();
-#pragma warning disable CS0618
-            ICodeCompiler icc = c.CreateCompiler();
-#pragma warning restore CS0618
-            CompilerParameters cp = new CompilerParameters();
-
-            cp.ReferencedAssemblies.Add("system.dll");
-            cp.ReferencedAssemblies.Add("system.xml.dll");
-
-            // If it can't find JSNLog.dll, make sure that "Produce outputs on build" property of JSNLog project is checked.
-            cp.ReferencedAssemblies.Add(TestConstants._jsnlogDllDirectory);
-
-            cp.CompilerOptions = "/t:library";
-            cp.GenerateInMemory = true;
-
-            StringBuilder sb = new StringBuilder("");
-            sb.Append("using System;\n");
-            sb.Append("using System.Xml;\n");
-            sb.Append("using System.Collections.Generic;\n");
-            sb.Append("using JSNLog;\n");
-
-            sb.Append("namespace CSCodeEvaler{ \n");
-            sb.Append("public class CSCodeEvaler{ \n");
-            sb.Append("public object EvalCode(){\n");
-
-            sb.Append("return " + sCSCode + "; \n");
-
-            sb.Append("} \n");
-            sb.Append("} \n");
-            sb.Append("}\n");
-
-            CompilerResults cr = icc.CompileAssemblyFromSource(cp, sb.ToString());
-            if (cr.Errors.Count > 0)
-            {
-                throw new Exception("Error evaluating cs code: " + cr.Errors[0].ErrorText);
-            }
-
-            System.Reflection.Assembly a = cr.CompiledAssembly;
-            object o = a.CreateInstance("CSCodeEvaler.CSCodeEvaler");
-
-            Type t = o.GetType();
-            MethodInfo mi = t.GetMethod("EvalCode");
-
-            object s = mi.Invoke(o, null);
-            return s;
-        }
-
         public static void EnsureEqualJsnlogConfiguration(JsnlogConfiguration jc1, JsnlogConfiguration jc2)
         {
             Assert.Equal(jc1.enabled, jc2.enabled);
