@@ -10,7 +10,6 @@ using System.Text;
 using JSNLog.Exceptions;
 using System.IO;
 using JSNLog.Tests.Common;
-using System.Web;
 
 namespace JSNLog.Tests.UnitTests
 {
