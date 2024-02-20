@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JSNLog.Tests.UnitTests;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +13,8 @@ namespace JSNLog.Tests.Common
         {
             // Set config cache in JavascriptLogging to contents of xe
             XmlElement xe = ConfigToXe(configXml);
-            JavascriptLogging.SetJsnlogConfiguration(null, logger);
+            var jsnlogConfigurationFromXml = XmlHelpers.DeserialiseXml<JsnlogConfiguration>(xe);
+            JavascriptLogging.SetJsnlogConfiguration(jsnlogConfigurationFromXml, logger);
         }
 
         public static XmlElement ConfigToXe(string configXml)
