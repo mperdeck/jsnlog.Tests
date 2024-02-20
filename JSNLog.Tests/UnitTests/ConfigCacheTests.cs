@@ -19,24 +19,6 @@ namespace JSNLog.Tests.UnitTests
     public class ConfigCacheTests
     {
         [Fact]
-        public void SetConfigWithJsnlogInWebConfig()
-        {
-            // Arrange
-
-            string configXml = @"
-                <jsnlog maxMessages=""5"">
-</jsnlog>
-";
-
-            XmlElement xe = CommonTestHelpers.ConfigToXe(configXml);
-            JsnlogConfiguration jsnlogConfiguration = new JsnlogConfiguration();
-
-            // Act
-
-            Exception ex = Assert.Throws<ConflictingConfigException>(() => JavascriptLogging.SetJsnlogConfiguration(jsnlogConfiguration));
-        }
-
-        [Fact]
         public void SetConfigWithoutJsnlogInWebConfig()
         {
             // Arrange
@@ -69,7 +51,8 @@ namespace JSNLog.Tests.UnitTests
 </jsnlog>
 ";
             XmlElement xe = CommonTestHelpers.ConfigToXe(configXml);
-            JavascriptLogging.SetJsnlogConfiguration(null);
+            var jsnlogConfigurationFromXml = XmlHelpers.DeserialiseXml<JsnlogConfiguration>(xe);
+            JavascriptLogging.SetJsnlogConfiguration(jsnlogConfigurationFromXml);
 
             // Act
 
