@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using Xunit;
 using JSNLog.LogHandling;
 using System.Xml;
 using JSNLog.Infrastructure;
 using JSNLog.Tests.Common;
+using System.Text.Json;
 
 namespace JSNLog.Tests.UnitTests
 {
@@ -471,14 +472,38 @@ dateFormat=""" + dateFormat + @"""
             Assert.Equal(Constants.JSNLogInternalErrorLoggerName, actual.ElementAt(0).FinalLogger);
         }
 
+        //TODO: In all tests, replace the XML config definitions with C# definitions. 
+        // Once that is done, you can remove the Xml attributes on the definition of JsnlogConfiguration, etc. in 
+        // the JSNLog solution.
+        // Look for "[XmlAttribute]"
         private void RunTest(string configXml, string json, string requestId, string userAgent, string userHostAddress,
             DateTime serverSideTimeUtc, string url, IEnumerable<LogData> expected)
         {
             XmlElement xe = CommonTestHelpers.ConfigToXe(configXml);
 
+            var jsnlogConfiguration = XmlHelpers.DeserialiseXml<JsnlogConfiguration>(xe);
+
+            //###########################
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            Debug.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            Debug.WriteLine(configXml);
+            Debug.WriteLine("-----------------------------");
+            string json2 = JsonSerializer.Serialize<JsnlogConfiguration>(new JsnlogConfiguration(), options);
+            Debug.WriteLine(json2);
+            Debug.WriteLine("-----------------------------");
+            json2 = JsonSerializer.Serialize<JsnlogConfiguration>(jsnlogConfiguration, options);
+            Debug.WriteLine(json2);
+            Debug.WriteLine("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+
+            RunTest(jsnlogConfiguration, json, requestId, userAgent, userHostAddress,
+                serverSideTimeUtc, url, expected);
+        }
+
+        private void RunTest(JsnlogConfiguration jsnlogConfiguration, string json, string requestId, string userAgent, string userHostAddress,
+            DateTime serverSideTimeUtc, string url, IEnumerable<LogData> expected)
+        {
             // Act
 
-            var jsnlogConfiguration = XmlHelpers.DeserialiseXml<JsnlogConfiguration>(xe);
             List<FinalLogData> actual =
                 LoggerProcessor.ProcessLogRequestExec(
                     json,
