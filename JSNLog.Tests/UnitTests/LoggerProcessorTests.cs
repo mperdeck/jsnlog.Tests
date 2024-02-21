@@ -476,6 +476,10 @@ dateFormat=""" + dateFormat + @"""
         // Once that is done, you can remove the Xml attributes on the definition of JsnlogConfiguration, etc. in 
         // the JSNLog solution.
         // Look for "[XmlAttribute]"
+        // See commits
+        // 9b7ae88424cebdd1dae30c815c6dc484040f1619
+        // 36da24ae525ab1567815fa800fab713dee1db238
+
         private void RunTest(string configXml, string json, string requestId, string userAgent, string userHostAddress,
             DateTime serverSideTimeUtc, string url, IEnumerable<LogData> expected)
         {
