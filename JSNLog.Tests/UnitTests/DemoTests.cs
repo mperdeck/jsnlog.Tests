@@ -611,8 +611,8 @@ new JsnlogConfiguration {
 </jsnlog>",
                 @"
 new JsnlogConfiguration {
-    corsAllowedOriginsRegex=""^https?:\\/\\/([a-z0-9]+[.])*(my-abc-domain[.]com|my-xyz-domain[.]com)$"",
-    corsAllowedHeaders=""X-MyHeader, X-MyHeader2""
+    corsAllowedOriginsRegex=""^https?:\\/\\/([a-z0-9]+[.])*(my-abc-domain[.]com|my-xyz-domain[.]com)$""(N},
+    corsAllowedHeaders=""X-MyHeader, X-MyHeader2{N)""
 }",
                 "cors2");
         }
